@@ -1,0 +1,104 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --background: 240 10% 3.9%;
+    --foreground: 0 0% 98%;
+    --primary: 263.4 70% 50.4%;
+    --font-sans: 'Outfit', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+  }
+
+  * {
+    box-sizing: border-box;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: #030408;
+    color: #f6f7fb;
+    font-family: var(--font-sans);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-sans);
+    letter-spacing: -0.02em;
+  }
+}
+
+/* Custom terminal design */
+.terminal-shell {
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), 
+              0 0 50px 0px rgba(99, 102, 241, 0.15);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.terminal-shell:hover {
+  border-color: rgba(99, 102, 241, 0.4);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6), 
+              0 0 60px 5px rgba(99, 102, 241, 0.25);
+}
+
+.ide-container {
+  font-family: var(--font-mono);
+}
+
+/* Custom scrollbar for simulator */
+.scrollbar-thin::-webkit-scrollbar {
+  width: 4px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: rgba(8, 10, 16, 0.5);
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background: rgba(30, 41, 59, 0.8);
+  border-radius: 99px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb:hover {
+  background: rgba(99, 102, 241, 0.5);
+}
+
+/* Animation utilities */
+@keyframes pulse-slow {
+  0%, 100% { opacity: 0.6; transform: scale(1); }
+  50% { opacity: 0.9; transform: scale(1.05); }
+}
+
+.animate-pulse-slow {
+  animation: pulse-slow 3s infinite ease-in-out;
+}
+
+/* Interactive 3D Card wrapper details */
+.interactive-3d-card {
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+.interactive-3d-card > * {
+  transform: translateZ(20px); /* Parallax lift inside tilted card */
+}
+
+/* Canvas background containers */
+.dot-grid-container,
+.morph-particles-container {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.morph-particles-canvas {
+  width: 100%;
+  height: 100%;
+}
+
+/* Glassmorphism details */
+.backdrop-blur-md {
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
