@@ -22,16 +22,14 @@ export default function App() {
   ];
 
   return (
-    <main className="portfolio-shell bg-[#030408] text-[#f6f7fb] min-h-screen relative overflow-x-hidden font-sans">
-      {/* Background visual components */}
-      <div className="absolute inset-0 z-0 pointer-events-none opacity-40">
-        <MorphParticles presetIndex={1} />
-        <DotGrid dotColor="140, 150, 180" />
-      </div>
-
-      {/* Radial overlay gradient glow */}
-      <div className="absolute top-0 left-1/4 w-[600px] h-[600px] rounded-full bg-gradient-to-tr from-[#312e81]/15 to-[#1e1b4b]/10 blur-[140px] pointer-events-none z-0" />
-      <div className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] rounded-full bg-gradient-to-br from-[#4338ca]/10 to-[#312e81]/10 blur-[130px] pointer-events-none z-0" />
+    <main className="portfolio-shell bg-[#020306] text-[#f6f7fb] min-h-screen relative overflow-x-hidden font-sans">
+      {/* HERO & HEADER REGION */}
+      <div className="relative w-full bg-gradient-to-b from-[#090b16] to-[#04050a] border-b border-[#1e293b]/25">
+        {/* Background visual components for Hero region */}
+        <div className="absolute inset-0 z-0 pointer-events-none opacity-45">
+          <DotGrid dotColor="140, 150, 180" />
+        </div>
+        <div className="absolute top-0 left-1/4 w-[600px] h-[600px] rounded-full bg-gradient-to-tr from-[#312e81]/15 to-[#1e1b4b]/10 blur-[140px] pointer-events-none z-0" />
 
       {/* Navigation header */}
       <header className="relative z-50 max-w-6xl mx-auto px-6 py-6 flex items-center justify-between">
@@ -73,12 +71,16 @@ export default function App() {
         </a>
       </header>
 
-      {/* Main Container */}
-      <div className="relative z-10 max-w-6xl mx-auto px-6 py-8 md:py-16 flex flex-col gap-24 md:gap-36">
-        
-        {/* HERO SECTION */}
-        <section id="home" className="grid md:grid-cols-[1.1fr_0.9fr] gap-12 md:gap-16 items-center min-h-[calc(100vh-140px)]">
-          <div className="flex flex-col gap-6 text-left">
+        {/* Hero Section Container */}
+        <div className="relative z-10 max-w-6xl mx-auto px-6 py-8 md:py-16">
+          {/* HERO SECTION */}
+          <section id="home" className="relative grid md:grid-cols-[1.1fr_0.9fr] gap-12 md:gap-16 items-center min-h-[calc(100vh-140px)]">
+            {/* Background 3D effect */}
+            <div className="absolute inset-0 z-0 pointer-events-none opacity-40">
+              <MorphParticles presetIndex={1} />
+            </div>
+
+          <div className="relative z-10 flex flex-col gap-6 text-left">
             <div className="inline-flex items-center gap-2 px-3 py-1 bg-indigo-500/10 border border-indigo-500/20 rounded-full text-[11px] font-semibold text-indigo-300 tracking-wider uppercase max-w-max select-none">
               <span className="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-pulse" />
               ECE Student & AI Developer
@@ -127,10 +129,23 @@ export default function App() {
             </div>
           </div>
 
-          <div className="flex justify-center items-center">
+          <div className="relative z-10 flex justify-center items-center">
             <DeveloperTerminal />
           </div>
         </section>
+      </div>
+    </div>
+
+    {/* OTHER SECTIONS REGION */}
+    <div className="relative w-full bg-[#020306]">
+      {/* Background visual components for other sections */}
+      <div className="absolute inset-0 z-0 pointer-events-none opacity-25">
+        <DotGrid dotColor="140, 150, 180" />
+      </div>
+      <div className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] rounded-full bg-gradient-to-br from-[#4338ca]/10 to-[#312e81]/10 blur-[130px] pointer-events-none z-0" />
+
+      {/* Main Container for sections below */}
+      <div className="relative z-10 max-w-6xl mx-auto px-6 py-20 md:py-32 flex flex-col gap-24 md:gap-36">
 
         {/* EXPERIENCE SECTION */}
         <section id="experience" className="flex flex-col gap-10">
@@ -143,7 +158,7 @@ export default function App() {
             {/* Loyalty Automation */}
             <div className="relative group">
               {/* Timeline marker */}
-              <div className="absolute -left-[31px] md:-left-[39px] top-1 w-[10px] h-[10px] rounded-full bg-indigo-500 border-2 border-[#030408] group-hover:scale-125 transition-all shadow-md shadow-indigo-500/50" />
+              <div className="absolute -left-[31px] md:-left-[39px] top-1 w-[10px] h-[10px] rounded-full bg-indigo-500 border-2 border-[#020306] group-hover:scale-125 transition-all shadow-md shadow-indigo-500/50" />
               
               <div className="bg-[#080c14]/60 border border-[#1e293b]/80 p-6 rounded-xl backdrop-blur-sm group-hover:border-indigo-500/50 transition-all flex flex-col gap-3">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5">
@@ -174,7 +189,7 @@ export default function App() {
             {/* CADS VIT Chennai */}
             <div className="relative group">
               {/* Timeline marker */}
-              <div className="absolute -left-[31px] md:-left-[39px] top-1 w-[10px] h-[10px] rounded-full bg-indigo-500 border-2 border-[#030408] group-hover:scale-125 transition-all shadow-md shadow-indigo-500/50" />
+              <div className="absolute -left-[31px] md:-left-[39px] top-1 w-[10px] h-[10px] rounded-full bg-indigo-500 border-2 border-[#020306] group-hover:scale-125 transition-all shadow-md shadow-indigo-500/50" />
               
               <div className="bg-[#080c14]/60 border border-[#1e293b]/80 p-6 rounded-xl backdrop-blur-sm group-hover:border-indigo-500/50 transition-all flex flex-col gap-3">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5">
@@ -416,11 +431,12 @@ export default function App() {
           </div>
         </section>
       </div>
+    </div>
 
-      {/* Footer copyright */}
-      <footer className="border-t border-[#1e293b]/30 py-8 text-center text-[10px] font-mono text-[#475569] relative z-10 bg-[#030408]/80">
-        © {new Date().getFullYear()} P Nagarjun. All rights reserved. Designed with tactile grids & morphing systems.
-      </footer>
-    </main>
-  );
+    {/* Footer copyright */}
+    <footer className="border-t border-[#1e293b]/30 py-8 text-center text-[10px] font-mono text-[#475569] relative z-10 bg-[#020306]">
+      © {new Date().getFullYear()} P Nagarjun. All rights reserved. Designed with tactile grids & morphing systems.
+    </footer>
+  </main>
+);
 }
