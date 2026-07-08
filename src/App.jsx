@@ -24,7 +24,7 @@ export default function App() {
   return (
     <main className="portfolio-shell bg-[#020306] text-[#f6f7fb] min-h-screen relative overflow-x-hidden font-sans">
       {/* HERO & HEADER REGION */}
-      <div className="relative w-full bg-gradient-to-b from-[#090b16] to-[#04050a] border-b border-[#1e293b]/25">
+      <div className="relative w-full bg-black border-b border-[#1e293b]/25">
         {/* Background visual components for Hero region */}
         <div className="absolute inset-0 z-0 pointer-events-none opacity-45">
           <DotGrid dotColor="140, 150, 180" />
