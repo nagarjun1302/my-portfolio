@@ -2,6 +2,7 @@ import { useState } from 'react';
 import DotGrid from './components/DotGrid';
 import MorphParticles from './components/MorphParticles';
 import DeveloperTerminal from './components/DeveloperTerminal';
+import SkillIcon from './components/SkillIcons';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState('home');
@@ -121,8 +122,9 @@ export default function App() {
               {skills.slice(0, 7).map((skill) => (
                 <span
                   key={skill.name}
-                  className="px-3 py-1.5 rounded-lg bg-[#0d121f]/60 border border-[#1e293b] text-[#94a3b8] text-[10px] font-mono hover:text-white hover:border-[#38bdf8]/50 hover:bg-[#080d19] transition-all cursor-default"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#0d121f]/60 border border-[#1e293b] text-[#94a3b8] text-[10px] font-mono hover:text-white hover:border-[#38bdf8]/50 hover:bg-[#080d19] transition-all cursor-default"
                 >
+                  <SkillIcon name={skill.name} className="w-3.5 h-3.5" />
                   {skill.name}
                 </span>
               ))}
@@ -259,7 +261,8 @@ export default function App() {
 
               <div className="flex flex-wrap gap-1.5 pt-3 border-t border-[#1e293b]/40">
                 {['Python', 'Gemini API', 'LangGraph', 'Agentic AI', 'SMTP'].map((tech) => (
-                  <span key={tech} className="px-2 py-1 bg-[#04060a]/90 border border-[#1e293b] rounded text-[10px] font-mono text-[#64748b] hover:text-white cursor-default transition-colors">
+                  <span key={tech} className="inline-flex items-center gap-1.5 px-2 py-1 bg-[#04060a]/90 border border-[#1e293b] rounded text-[10px] font-mono text-[#64748b] hover:text-white cursor-default transition-colors">
+                    <SkillIcon name={tech} className="w-3 h-3" />
                     {tech}
                   </span>
                 ))}
@@ -298,7 +301,8 @@ export default function App() {
 
               <div className="flex flex-wrap gap-1.5 pt-3 border-t border-[#1e293b]/40">
                 {['OpenCV', 'Python', 'Raspberry Pi', 'IoT', 'Computer Vision'].map((tech) => (
-                  <span key={tech} className="px-2 py-1 bg-[#04060a]/90 border border-[#1e293b] rounded text-[10px] font-mono text-[#64748b] hover:text-white cursor-default transition-colors">
+                  <span key={tech} className="inline-flex items-center gap-1.5 px-2 py-1 bg-[#04060a]/90 border border-[#1e293b] rounded text-[10px] font-mono text-[#64748b] hover:text-white cursor-default transition-colors">
+                    <SkillIcon name={tech} className="w-3 h-3" />
                     {tech}
                   </span>
                 ))}
@@ -321,7 +325,10 @@ export default function App() {
               <div className="flex flex-col gap-3">
                 {skills.filter(s => s.category === 'AI/ML').map(s => (
                   <div key={s.name} className="flex justify-between items-center text-xs">
-                    <span className="text-[#f1f5f9]">{s.name}</span>
+                    <span className="flex items-center gap-2.5 text-[#f1f5f9]">
+                      <SkillIcon name={s.name} className="w-4 h-4 shrink-0" />
+                      {s.name}
+                    </span>
                     <span className="text-[10px] text-indigo-300 bg-indigo-500/10 border border-indigo-500/20 px-2 py-0.5 rounded font-mono">Expert</span>
                   </div>
                 ))}
@@ -334,7 +341,10 @@ export default function App() {
               <div className="flex flex-col gap-3">
                 {skills.filter(s => s.category === 'Programming').map(s => (
                   <div key={s.name} className="flex justify-between items-center text-xs">
-                    <span className="text-[#f1f5f9]">{s.name}</span>
+                    <span className="flex items-center gap-2.5 text-[#f1f5f9]">
+                      <SkillIcon name={s.name} className="w-4 h-4 shrink-0" />
+                      {s.name}
+                    </span>
                     <span className="text-[10px] text-emerald-300 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded font-mono">Fluent</span>
                   </div>
                 ))}
@@ -347,7 +357,10 @@ export default function App() {
               <div className="flex flex-col gap-3">
                 {skills.filter(s => s.category === 'Tools').map(s => (
                   <div key={s.name} className="flex justify-between items-center text-xs">
-                    <span className="text-[#f1f5f9]">{s.name}</span>
+                    <span className="flex items-center gap-2.5 text-[#f1f5f9]">
+                      <SkillIcon name={s.name} className="w-4 h-4 shrink-0" />
+                      {s.name}
+                    </span>
                     <span className="text-[10px] text-sky-300 bg-sky-500/10 border border-sky-500/20 px-2 py-0.5 rounded font-mono">Advanced</span>
                   </div>
                 ))}
