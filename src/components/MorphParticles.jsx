@@ -97,19 +97,8 @@ class Particle {
     this.size = 2 + 4 * this.morphFactor;
   }
 
-  draw(ctx, config) {
-    const grayBase = config.grayBase;
-    const grayActive = config.grayActive;
-    const o = Math.floor(grayBase + (grayActive - grayBase) * this.morphFactor);
-    const l = o;
-    const d = o;
-
-    const rVal = Math.floor(o + (255 - o) * this.activeAlpha);
-    const gVal = rVal;
-    const bVal = rVal;
-
-    const baseAlpha = config.baseAlpha + 0.3 * this.morphFactor;
-    let opacity = baseAlpha + (1 - baseAlpha) * this.activeAlpha;
+  draw(ctx, config, theme = 'light') {
+    const isLight = theme === 'light';
 
     let rippleVal = 0;
     let rippleBright = 0;
@@ -124,21 +113,36 @@ class Particle {
       rippleBright = 0.4 * config.rippleBrightness * wave;
     }
 
+    let finalR, finalG, finalB;
+    if (isLight) {
+      // Pure Black Particles for Light Mode
+      finalR = 0;
+      finalG = 0;
+      finalB = 0;
+    } else {
+      const grayBase = config.grayBase;
+      const grayActive = config.grayActive;
+      const o = Math.floor(grayBase + (grayActive - grayBase) * this.morphFactor);
+      const rVal = Math.floor(o + (255 - o) * this.activeAlpha);
+      const mix = rippleBright * config.mixIntensity;
+      finalR = Math.floor(rVal + (255 - rVal) * mix);
+      finalG = finalR;
+      finalB = finalR;
+    }
+
+    const baseAlpha = (isLight ? 0.25 : config.baseAlpha) + 0.35 * this.morphFactor;
+    let opacity = baseAlpha + (1 - baseAlpha) * this.activeAlpha;
+
     opacity *= this.staticOpacity * this.currentOpacity;
     opacity += (1 - opacity) * rippleBright;
 
     if (opacity < 0.01) return;
 
-    const mix = rippleBright * config.mixIntensity;
-    const finalR = Math.floor(rVal + (255 - rVal) * mix);
-    const finalG = Math.floor(gVal + (255 - gVal) * mix);
-    const finalB = Math.floor(bVal + (255 - bVal) * mix);
-
     ctx.fillStyle = `rgba(${finalR}, ${finalG}, ${finalB}, ${opacity})`;
     ctx.beginPath();
 
     let easeProgress = Math.max(0, ((p) => {
-      const t = 5; // standard custom easing in the code
+      const t = 5;
       const pMinusOne = p - 1;
       return pMinusOne * pMinusOne * ((t + 1) * pMinusOne + t) + 1;
     })(this.introProgress));
@@ -156,7 +160,7 @@ class Particle {
   }
 }
 
-export default function MorphParticles({ className = '', presetIndex = 1 }) {
+export default function MorphParticles({ className = '', presetIndex = 1, theme = 'light' }) {
   const canvasRef = useRef(null);
   const containerRef = useRef(null);
   const animFrameRef = useRef(null);
@@ -219,7 +223,6 @@ export default function MorphParticles({ className = '', presetIndex = 1 }) {
 
           p.introDelay = 1.35 * distToCenter;
 
-          // Corner fade out calculation
           let cornerFade = Math.pow(Math.abs(c / cols + r / rows - 1), 1.5);
           cornerFade = Math.min(1, 5 * cornerFade);
           p.baseOpacity = cornerFade;
@@ -260,7 +263,6 @@ export default function MorphParticles({ className = '', presetIndex = 1 }) {
       const isMousedown = isMousedownRef.current;
       particlesRef.current.forEach(p => p.update(mouseToPass, w, h, elapsed, isHovering, fadeOutProgress, isMousedown));
 
-      // Connect closest interactive particles near mouse
       const interactiveParticles = particlesRef.current
         .filter(p => p.isInteractive)
         .sort((p1, p2) => p1.distanceToMouse - p2.distanceToMouse);
@@ -275,7 +277,6 @@ export default function MorphParticles({ className = '', presetIndex = 1 }) {
       const activeList = Array.from(closestSubset).filter(p => p.distanceToMouse < 225);
       const lines = linesRef.current;
 
-      // Update lines lifecycle
       for (let i = lines.length - 1; i >= 0; i--) {
         const line = lines[i];
         const dx = line.p1.x - line.p2.x;
@@ -300,7 +301,6 @@ export default function MorphParticles({ className = '', presetIndex = 1 }) {
         }
       }
 
-      // Add new lines randomly if conditions met
       if (activeList.length > 1 && lines.length < 20) {
         for (let i = 0; i < 5; i++) {
           const p1 = activeList[Math.floor(Math.random() * activeList.length)];
@@ -308,7 +308,7 @@ export default function MorphParticles({ className = '', presetIndex = 1 }) {
             if (p1 === p2) return false;
             const dx = p1.x - p2.x;
             const dy = p1.y - p2.y;
-            return dx * dx + dy * dy < 10000; // within 100px
+            return dx * dx + dy * dy < 10000;
           });
 
           if (matches.length > 0) {
@@ -329,16 +329,19 @@ export default function MorphParticles({ className = '', presetIndex = 1 }) {
         ctx.beginPath();
         ctx.moveTo(line.p1.x, line.p1.y);
         ctx.lineTo(line.p2.x, line.p2.y);
-        ctx.strokeStyle = `rgba(255, 255, 255, ${line.opacity * config.lineOpacity})`;
+        const strokeStyle = theme === 'light'
+          ? `rgba(0, 0, 0, ${line.opacity * config.lineOpacity * 0.5})`
+          : `rgba(255, 255, 255, ${line.opacity * config.lineOpacity})`;
+        ctx.strokeStyle = strokeStyle;
         ctx.stroke();
       });
 
       // Draw background particles first, then active/morphed ones
       particlesRef.current.forEach(p => {
-        if (p.activeAlpha < 0.5) p.draw(ctx, config);
+        if (p.activeAlpha < 0.5) p.draw(ctx, config, theme);
       });
       particlesRef.current.forEach(p => {
-        if (p.activeAlpha >= 0.5) p.draw(ctx, config);
+        if (p.activeAlpha >= 0.5) p.draw(ctx, config, theme);
       });
 
       animFrameRef.current = requestAnimationFrame(animate);

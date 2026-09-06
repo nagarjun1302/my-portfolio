@@ -1,455 +1,778 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import DotGrid from './components/DotGrid';
-import MorphParticles from './components/MorphParticles';
 import DeveloperTerminal from './components/DeveloperTerminal';
 import SkillIcon from './components/SkillIcons';
+import TechStackGrid from './components/TechStackGrid';
+import MorphParticles from './components/MorphParticles';
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState('home');
+  const [activeSection, setActiveSection] = useState('home');
+  const [copiedField, setCopiedField] = useState(null);
+  const [projectCategory, setProjectCategory] = useState('all');
+  const [scrolled, setScrolled] = useState(false);
 
-  const skills = [
-    { name: 'LangGraph', category: 'AI/ML' },
-    { name: 'SAM 2.1', category: 'AI/ML' },
-    { name: 'Gemini API', category: 'AI/ML' },
-    { name: 'OpenCV', category: 'AI/ML' },
-    { name: 'Python', category: 'Programming' },
-    { name: 'C++', category: 'Programming' },
-    { name: 'Java', category: 'Programming' },
-    { name: 'JavaScript', category: 'Programming' },
-    { name: 'Next.js', category: 'Tools' },
-    { name: 'Express.js', category: 'Tools' },
-    { name: 'MongoDB', category: 'Tools' },
-    { name: 'Raspberry Pi', category: 'Tools' }
+  // Monitor scroll to update header appearance and active tab
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 80) {
+        setScrolled(true);
+      } else {
+        setScrolled(false);
+      }
+
+      const sections = ['home', 'experience', 'projects', 'skills', 'certificates', 'education', 'contact'];
+      const scrollPosition = window.scrollY + 200;
+
+      for (const section of sections) {
+        const el = document.getElementById(section);
+        if (el) {
+          const top = el.offsetTop;
+          const height = el.offsetHeight;
+          if (scrollPosition >= top && scrollPosition < top + height) {
+            setActiveSection(section);
+            break;
+          }
+        }
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const copyToClipboard = (text, field) => {
+    navigator.clipboard.writeText(text);
+    setCopiedField(field);
+    setTimeout(() => setCopiedField(null), 2500);
+  };
+
+  const projectsData = [
+    {
+      id: 'nutrition',
+      title: 'South Indian Nutrition Advisor',
+      tagline: 'AI-Powered Dietary & Glycemic Risk Assessment System',
+      category: 'ai',
+      categoryLabel: 'Agentic AI & LLMs',
+      date: 'Jul. 2026 – Aug. 2026',
+      github: 'https://github.com/nagarjun1302/south-indian-nutrition-advisor',
+      bullets: [
+        'Built an end-to-end AI nutrition advisor tailored for South Indian cuisine using Google Gemini and LangChain for multi-step meal analysis, glycemic risk assessment, and ingredient-level dietary recommendations.',
+        'Integrated Supabase for secure user authentication (Google OAuth + Email) with Row Level Security (RLS) policies protecting user meal logs.',
+        'Automated personalised email nutrition report delivery via Gmail REST API with zero manual intervention.'
+      ],
+      tech: ['Python', 'FastAPI', 'Google Gemini API', 'LangChain', 'Supabase', 'Email Automation']
+    },
+    {
+      id: 'code-gen',
+      title: 'Multi-Agent Autonomous Code Generator',
+      tagline: 'Self-Coordinating LLM Framework for Full Codebase Synthesis',
+      category: 'ai',
+      categoryLabel: 'Agentic AI & LLMs',
+      date: 'Jun. 2026 – Jul. 2026',
+      github: 'https://github.com/nagarjun1302/agentriq-ai',
+      bullets: [
+        'Developed a multi-agent AI framework using LangGraph that converts a natural language prompt into a fully generated codebase via coordinated Planner, Architect, Coder, and Reviewer agents.',
+        'Built a FastAPI streaming backend with live agent execution timeline, interactive file browser, and instant ZIP project download.',
+        'Leveraged Groq LLM inference for ultra-fast, low-latency code generation across complex project architectures.'
+      ],
+      tech: ['Python', 'LangGraph', 'FastAPI', 'Groq', 'Agentic AI']
+    },
+    {
+      id: 'elevator',
+      title: 'Smart Elevator Automation Prototype',
+      tagline: 'Embedded IoT & Computer Vision Lift Dispatcher',
+      category: 'iot',
+      categoryLabel: 'IoT & Computer Vision',
+      date: 'Mar. 2024 – Apr. 2024',
+      github: 'https://github.com/nagarjun1302/smart-elevator-automation',
+      bullets: [
+        'Built a smart elevator system using Raspberry Pi, PIR, ultrasonic sensors, and OpenCV-based computer vision for real-time occupant detection and intelligent floor-stopping.',
+        'Optimized elevator passenger dispatching and energy consumption in high-density building prototypes.',
+        'Engineered real-time sensor processing pipelines with Python and embedded hardware interrupts.'
+      ],
+      tech: ['OpenCV', 'Python', 'Computer Vision', 'IoT', 'Raspberry Pi']
+    }
   ];
 
+  const certificatesData = [
+    // 1. FIRST ORACLE
+    {
+      id: 'oracle-ai',
+      title: 'Oracle Agentic AI Certified Foundations Associate',
+      issuer: 'Oracle Corporation',
+      issuerTag: 'Oracle',
+      date: 'Aug. 2026',
+      desc: 'Demonstrates foundational expertise in multi-agent system architecture, autonomous decision loops, tool integrations, and enterprise AI orchestration.',
+      badgeColor: 'border-l-indigo-600 hover:border-indigo-500',
+      tagColor: 'bg-indigo-50 text-indigo-700 border-indigo-100',
+      link: 'https://catalog-education.oracle.com/pls/certview/sharebadge?id=E39AEE06227E02036D56B757EA8B81F332672980C63E1778ECCBCDF0AADA500'
+    },
+    // 2. THEN 4 ANTHROPIC COURSES
+    {
+      id: 'claude-101',
+      title: 'Claude 101',
+      issuer: 'Anthropic',
+      issuerTag: 'Anthropic',
+      date: 'Jul. 2026',
+      desc: 'Verifies proficiency in Claude core features, prompting fundamentals, context window management, and everyday AI productivity workflows.',
+      badgeColor: 'border-l-indigo-600 hover:border-indigo-500',
+      tagColor: 'bg-indigo-50 text-indigo-700 border-indigo-100',
+      link: 'https://verify.skilljar.com/c/e8hfk8typb7r'
+    },
+    {
+      id: 'claude-code',
+      title: 'Claude Code in Action',
+      issuer: 'Anthropic',
+      issuerTag: 'Anthropic',
+      date: 'Jul. 2026',
+      desc: 'Practical certification covering advanced prompt engineering, automated code refactoring, context optimization, and agentic CLI workflows using Claude.',
+      badgeColor: 'border-l-indigo-600 hover:border-indigo-500',
+      tagColor: 'bg-indigo-50 text-indigo-700 border-indigo-100',
+      link: 'https://verify.skilljar.com/c/sh5ux32pbeyo'
+    },
+    {
+      id: 'custom-tools',
+      title: 'Building Custom Tools for Claude',
+      issuer: 'Anthropic',
+      issuerTag: 'Anthropic',
+      date: 'Jul. 2026',
+      desc: 'Specialized training on function calling, API tool definitions, JSON schema parameters, and agentic execution pipelines with Claude.',
+      badgeColor: 'border-l-indigo-600 hover:border-indigo-500',
+      tagColor: 'bg-indigo-50 text-indigo-700 border-indigo-100',
+      link: 'https://verify.skilljar.com/c/sh5ux32pbeyo'
+    },
+    {
+      id: 'mcp-intro',
+      title: 'Introduction to Model Context Protocol',
+      issuer: 'Anthropic',
+      issuerTag: 'Anthropic',
+      date: 'Jul. 2026',
+      desc: 'Certification in Model Context Protocol (MCP) standards, building client-server protocol bridges, and connecting LLMs to external tools and databases.',
+      badgeColor: 'border-l-indigo-600 hover:border-indigo-500',
+      tagColor: 'bg-indigo-50 text-indigo-700 border-indigo-100',
+      link: 'https://verify.skilljar.com/c/iskbyca3qx3j'
+    }
+  ];
+
+  const filteredProjects = projectCategory === 'all' 
+    ? projectsData 
+    : projectsData.filter(p => p.category === projectCategory);
+
   return (
-    <main className="portfolio-shell bg-[#020306] text-[#f6f7fb] min-h-screen relative overflow-x-hidden font-sans">
-      {/* HERO & HEADER REGION */}
-      <div className="relative w-full bg-black border-b border-[#1e293b]/25">
-        {/* Background visual components for Hero region */}
-        <div className="absolute inset-0 z-0 pointer-events-none opacity-45">
-          <DotGrid dotColor="140, 150, 180" />
+    <div className="portfolio-app min-h-screen bg-[#f8fafc] text-slate-800 font-sans selection:bg-indigo-500 selection:text-white">
+      
+      {/* TOAST NOTIFICATION FOR COPY */}
+      {copiedField && (
+        <div className="fixed bottom-6 right-6 z-50 bg-slate-900 text-white text-xs font-semibold px-4 py-3 rounded-xl shadow-2xl flex items-center gap-2 border border-slate-700 animate-bounce">
+          <span className="text-emerald-400 font-bold">✓</span> Copied {copiedField} to clipboard!
         </div>
-        <div className="absolute top-0 left-1/4 w-[600px] h-[600px] rounded-full bg-gradient-to-tr from-[#312e81]/15 to-[#1e1b4b]/10 blur-[140px] pointer-events-none z-0" />
+      )}
 
-      {/* Navigation header */}
-      <header className="relative z-50 max-w-6xl mx-auto px-6 py-6 flex items-center justify-between">
-        <a href="#home" className="flex items-center gap-3 group" onClick={() => setActiveTab('home')}>
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-[#6366f1] via-[#8b5cf6] to-[#ec4899] p-[1.5px] shadow-lg shadow-indigo-500/10">
-            <div className="w-full h-full bg-[#080a10] rounded-[10px] flex items-center justify-center font-bold text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400 text-sm select-none">
-              PN
-            </div>
-          </div>
-          <span className="font-semibold text-sm tracking-wide text-[#f1f5f9] group-hover:text-white transition-colors">
-            Nagarjun
-          </span>
-        </a>
+      {/* FIXED NAVBAR */}
+      <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        scrolled 
+          ? 'bg-white/90 backdrop-blur-md border-b border-slate-200/90 shadow-sm py-3' 
+          : 'bg-transparent py-5'
+      }`}>
+        <div className="max-w-6xl mx-auto px-6 flex items-center justify-between">
+          
 
-        <nav className="hidden md:flex items-center gap-1 bg-[#090d16]/85 border border-[#1e293b]/70 px-2 py-1.5 rounded-full backdrop-blur-md shadow-xl">
-          {['home', 'experience', 'projects', 'skills', 'contact'].map((tab) => (
-            <a
-              key={tab}
-              href={`#${tab}`}
-              onClick={() => setActiveTab(tab)}
-              className={`text-xs font-medium px-4 py-2 rounded-full capitalize transition-all duration-300 ${
-                activeTab === tab
-                  ? 'bg-indigo-600/90 text-white shadow-md shadow-indigo-600/20'
-                  : 'text-[#94a3b8] hover:text-white hover:bg-white/5'
-              }`}
-            >
-              {tab}
-            </a>
-          ))}
-        </nav>
+          {/* Desktop Navigation */}
+          <nav className="hidden md:flex items-center gap-1 bg-white/90 border border-slate-200/90 px-3 py-1.5 rounded-full backdrop-blur-md shadow-sm">
+            {[
+              { id: 'home', label: 'Home' },
+              { id: 'experience', label: 'Experience' },
+              { id: 'projects', label: 'Projects' },
+              { id: 'skills', label: 'Tech Stack' },
+              { id: 'certificates', label: 'Certificates' },
+              { id: 'education', label: 'Education' },
+              { id: 'contact', label: 'Contact' },
+            ].map((tab) => (
+              <a
+                key={tab.id}
+                href={`#${tab.id}`}
+                onClick={() => setActiveSection(tab.id)}
+                className={`text-xs font-semibold px-3.5 py-1.5 rounded-full transition-all duration-200 ${
+                  activeSection === tab.id
+                    ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30'
+                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                }`}
+              >
+                {tab.label}
+              </a>
+            ))}
+          </nav>
 
-        <a
-          href="/nagarjun_resume.pdf"
-          target="_blank"
-          rel="noreferrer"
-          className="text-xs font-semibold px-4.5 py-2.5 rounded-full border border-[#1e293b] bg-[#090d16]/80 text-[#f1f5f9] hover:bg-white/5 hover:text-white transition-all select-none shadow-md backdrop-blur-sm"
-        >
-          Resume
-        </a>
+          {/* Resume Download CTA */}
+          <a
+            href="/nagarjun_resume_2.pdf"
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex items-center gap-2 text-xs font-bold px-4 py-2.5 rounded-full bg-indigo-600 hover:bg-indigo-500 text-white shadow-lg shadow-indigo-600/20 hover:shadow-indigo-600/30 transition-all transform hover:-translate-y-0.5"
+          >
+            <span>Resume</span>
+            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+          </a>
+        </div>
       </header>
 
-        {/* Hero Section Container */}
-        <div className="relative z-10 max-w-6xl mx-auto px-6 py-8 md:py-16">
-          {/* HERO SECTION */}
-          <section id="home" className="relative grid md:grid-cols-[1.1fr_0.9fr] gap-12 md:gap-16 items-center min-h-[calc(100vh-140px)]">
-            {/* Background 3D effect */}
-            <div className="absolute inset-0 z-0 pointer-events-none opacity-40">
-              <MorphParticles presetIndex={1} />
-            </div>
+      {/* ========================================================================= */}
+      {/* 1. HERO SECTION - LIGHT MODE                                              */}
+      {/* ========================================================================= */}
+      <section id="home" className="relative w-full bg-[#f8fafc] text-slate-800 pt-28 pb-20 md:pt-36 md:pb-32 overflow-hidden border-b border-slate-200/80">
+        
+        {/* Interactive Morph Canvas Background */}
+        <MorphParticles theme="light" className="opacity-80" />
 
-          <div className="relative z-10 flex flex-col gap-6 text-left">
-            <div className="inline-flex items-center gap-2 px-3 py-1 bg-indigo-500/10 border border-indigo-500/20 rounded-full text-[11px] font-semibold text-indigo-300 tracking-wider uppercase max-w-max select-none">
-              <span className="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-pulse" />
-              ECE Student & AI Developer
-            </div>
+        {/* Subtle Ambient Glowing Orbs */}
+        <div className="absolute top-[-100px] left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-gradient-to-tr from-indigo-200/40 via-purple-200/30 to-sky-200/30 rounded-full blur-[140px] pointer-events-none z-0" />
+        <div className="absolute bottom-0 right-0 w-[400px] h-[400px] bg-indigo-300/20 rounded-full blur-[120px] pointer-events-none z-0" />
+        
+        {/* Clean Static Tactile Grid Layer */}
+        <div className="absolute inset-0 z-0 pointer-events-none opacity-40">
+          <DotGrid dotColor="148, 163, 184" />
+        </div>
 
-            <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold leading-[1.05] tracking-tight text-white">
-              Building intelligent <br />
-              systems with{' '}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-sky-400 via-indigo-400 to-purple-400">
-                AI & Computer Vision.
-              </span>
-            </h1>
-
-            <p className="text-sm sm:text-base text-[#94a3b8] leading-relaxed max-w-[540px]">
-              Final-year Electronics & Computer Engineering student at VIT Chennai. Specializing in agentic AI assistants, image segmentation, and production web apps. Experienced in deep-sea computer vision research and full-stack catalog systems.
-            </p>
-
-            <div className="flex flex-wrap gap-4 mt-2">
-              <a
-                href="/nagarjun_resume.pdf"
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex items-center gap-2 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-semibold text-xs px-6 py-3.5 rounded-full shadow-lg shadow-indigo-600/20 hover:shadow-indigo-500/30 transition-all select-none"
-              >
-                View Full Resume
-                <span className="text-sm">→</span>
-              </a>
-              <a
-                href="mailto:nagarjun1302@gmail.com"
-                className="inline-flex items-center gap-2 border border-[#1e293b] bg-[#090d16]/80 hover:bg-white/5 text-white font-semibold text-xs px-6 py-3.5 rounded-full transition-all select-none"
-              >
-                Contact Me
-              </a>
-            </div>
-
-            {/* Micro skill row */}
-            <div className="flex flex-wrap gap-2.5 mt-4 border-t border-[#1e293b]/50 pt-6">
-              {skills.slice(0, 7).map((skill) => (
-                <span
-                  key={skill.name}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#0d121f]/60 border border-[#1e293b] text-[#94a3b8] text-[10px] font-mono hover:text-white hover:border-[#38bdf8]/50 hover:bg-[#080d19] transition-all cursor-default"
-                >
-                  <SkillIcon name={skill.name} className="w-3.5 h-3.5" />
-                  {skill.name}
+        <div className="relative z-10 max-w-6xl mx-auto px-6">
+          <div className="grid lg:grid-cols-[1.1fr_0.9fr] gap-12 lg:gap-16 items-center">
+            
+            {/* Left Bio Column */}
+            <div className="flex flex-col gap-5 text-left">
+              
+              {/* Big Name Title */}
+              <h1 className="flex flex-col tracking-tight">
+                <span className="text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-600">
+                  Hi, I'm
                 </span>
+                <span className="text-5xl sm:text-6xl lg:text-7xl font-black text-slate-900 leading-none">
+                  P Nagarjun
+                </span>
+              </h1>
+
+              {/* Reduced Headline */}
+              <h2 className="mt-10 text-2xl sm:text-3xl lg:text-4xl font-black text-slate-900 leading-tight tracking-tight">
+                Engineering <br className="hidden sm:inline" />
+                <span className="text-indigo-600">Agentic AI Systems</span> <br className="hidden sm:inline" />
+                & End-to-End Applications.
+              </h2>
+
+              {/* Sub-paragraph */}
+              <p className="text-sm sm:text-base text-slate-600 leading-relaxed max-w-[560px]">
+                A final-year B.Tech Electronics & Computer Engineering student at <strong className="text-slate-900 font-semibold">VIT Chennai</strong>. Specializing in multi-agent LLM frameworks, and full-stack AI web platforms.
+              </p>
+
+              {/* CTAs */}
+              <div className="flex flex-wrap gap-3.5 pt-2">
+                <a
+                  href="/nagarjun_resume_2.pdf"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs px-6 py-3.5 rounded-xl shadow-lg shadow-indigo-600/20 hover:shadow-indigo-600/30 transition-all transform hover:-translate-y-0.5"
+                >
+                  <span>View Full Resume</span>
+                </a>
+
+                <a
+                  href="#contact"
+                  className="inline-flex items-center gap-2 bg-white border border-slate-300 hover:border-indigo-500 hover:bg-slate-50 text-slate-800 font-semibold text-xs px-6 py-3.5 rounded-xl shadow-sm transition-all"
+                >
+                  <span>Contact Me</span>
+                </a>
+              </div>
+
+            </div>
+
+            {/* Right Terminal Column */}
+            <div className="relative flex justify-center items-center">
+              <DeveloperTerminal />
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      {/* ========================================================================= */}
+      {/* LIGHT MODE SECTIONS REGION (WHITISH BACKGROUND, CLEAN ELEGANT UI)        */}
+      {/* ========================================================================= */}
+      <main className="relative w-full bg-[#f8fafc] text-slate-800">
+        
+        {/* Subtle decorative background mesh */}
+        <div className="absolute inset-0 bg-[radial-gradient(#e2e8f0_1px,transparent_1px)] [background-size:24px_24px] pointer-events-none opacity-60" />
+
+        <div className="relative z-10 max-w-6xl mx-auto px-6 py-20 md:py-28 flex flex-col gap-24 md:gap-32">
+
+          {/* ----------------------------------------------------------------------- */}
+          {/* 2. EXPERIENCE SECTION (WORK & RESEARCH)                                 */}
+          {/* ----------------------------------------------------------------------- */}
+          <section id="experience" className="flex flex-col gap-10 scroll-mt-28">
+            <div className="flex flex-col gap-2 border-l-4 border-indigo-600 pl-4">
+              <div className="text-xs font-mono font-bold text-indigo-600 uppercase tracking-widest">
+                Career Roadmap
+              </div>
+              <h2 className="text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight">
+                Work & Research Experience
+              </h2>
+              <p className="text-sm text-slate-600">
+                Industry internships and specialized computer vision research initiatives
+              </p>
+            </div>
+
+            <div className="relative border-l-2 border-indigo-200 ml-4 md:ml-6 pl-6 md:pl-10 space-y-10">
+              
+              {/* Experience 1: Loyalty Automation */}
+              <div className="relative group">
+                {/* Timeline node */}
+                <div className="absolute -left-[31px] md:-left-[47px] top-1.5 w-5 h-5 rounded-full bg-white border-4 border-indigo-600 shadow-md group-hover:scale-125 transition-transform" />
+                
+                <div className="bg-white border border-slate-200/90 p-6 md:p-8 rounded-2xl shadow-sm hover:shadow-xl hover:border-indigo-300 transition-all duration-300 flex flex-col gap-4">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-4">
+                    <div>
+                      <span className="inline-block px-2.5 py-0.5 bg-indigo-50 text-indigo-700 font-mono text-[11px] font-bold rounded-md mb-1.5 border border-indigo-100">
+                        AI & Web Development Intern
+                      </span>
+                      <h3 className="text-xl font-bold text-slate-900 group-hover:text-indigo-600 transition-colors">
+                        Loyalty Automation Pvt Ltd, Chennai
+                      </h3>
+                    </div>
+                    <span className="text-xs font-mono font-bold text-slate-500 bg-slate-100 px-3 py-1 rounded-full self-start sm:self-auto border border-slate-200">
+                      Jun. 2026 – Jul. 2026
+                    </span>
+                  </div>
+
+                  <ul className="text-sm text-slate-600 space-y-2.5 list-disc pl-5 leading-relaxed">
+                    <li>
+                      Built and maintained a B2B product catalog platform using <strong className="text-slate-900 font-semibold">Express.js and MongoDB</strong>.
+                    </li>
+                    <li>
+                      Developed an <strong className="text-indigo-700 font-semibold">Agentic AI chatbot</strong> with <strong className="text-indigo-700 font-semibold">LangGraph + Groq</strong>, enabling product search via natural language.
+                    </li>
+                  </ul>
+
+                  <div className="flex flex-wrap gap-2 pt-2">
+                    {['Express.js', 'MongoDB', 'LangGraph', 'Groq', 'Agentic AI'].map((tech) => (
+                      <span key={tech} className="inline-flex items-center gap-1 px-2.5 py-1 bg-slate-50 border border-slate-200 rounded-md text-xs font-mono text-slate-700 font-medium">
+                        <SkillIcon name={tech} className="w-3.5 h-3.5" />
+                        {tech}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Experience 2: CADS VIT Chennai */}
+              <div className="relative group">
+                {/* Timeline node */}
+                <div className="absolute -left-[31px] md:-left-[47px] top-1.5 w-5 h-5 rounded-full bg-white border-4 border-indigo-600 shadow-md group-hover:scale-125 transition-transform" />
+                
+                <div className="bg-white border border-slate-200/90 p-6 md:p-8 rounded-2xl shadow-sm hover:shadow-xl hover:border-indigo-300 transition-all duration-300 flex flex-col gap-4">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-4">
+                    <div>
+                      <span className="inline-block px-2.5 py-0.5 bg-purple-50 text-purple-700 font-mono text-[11px] font-bold rounded-md mb-1.5 border border-purple-100">
+                        Research Intern
+                      </span>
+                      <h3 className="text-xl font-bold text-slate-900 group-hover:text-purple-600 transition-colors">
+                        Centre for Advanced Data Science (CADS), VIT Chennai
+                      </h3>
+                    </div>
+                    <span className="text-xs font-mono font-bold text-slate-500 bg-slate-100 px-3 py-1 rounded-full self-start sm:self-auto border border-slate-200">
+                      Jun. 2024 – Nov. 2024
+                    </span>
+                  </div>
+
+                  <ul className="text-sm text-slate-600 space-y-2.5 list-disc pl-5 leading-relaxed">
+                    <li>
+                      Developed a deep-sea image segmentation framework in collaboration with <strong className="text-slate-900 font-semibold">NIOT</strong> for polymetallic nodule detection, achieving <strong className="text-purple-700 font-semibold">97.90% accuracy</strong> with custom annotated datasets.
+                    </li>
+                    <li>
+                      Presented the work at the <strong className="text-slate-900 font-semibold">7th International Conference on Ocean Engineering (ICOE 2025)</strong>.
+                    </li>
+                  </ul>
+
+                  <div className="flex flex-wrap gap-2 pt-2">
+                    {['OpenCV', 'Computer Vision', 'Python', 'NIOT Research', 'ICOE 2025'].map((tech) => (
+                      <span key={tech} className="inline-flex items-center gap-1 px-2.5 py-1 bg-slate-50 border border-slate-200 rounded-md text-xs font-mono text-slate-700 font-medium">
+                        <SkillIcon name={tech} className="w-3.5 h-3.5" />
+                        {tech}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </section>
+
+          {/* ----------------------------------------------------------------------- */}
+          {/* 3. FEATURED PROJECTS SECTION                                            */}
+          {/* ----------------------------------------------------------------------- */}
+          <section id="projects" className="flex flex-col gap-10 scroll-mt-28">
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-l-4 border-indigo-600 pl-4">
+              <div>
+                <div className="text-xs font-mono font-bold text-indigo-600 uppercase tracking-widest">
+                  Software Engineering
+                </div>
+                <h2 className="text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight">
+                  Featured Projects
+                </h2>
+                <p className="text-sm text-slate-600 mt-1">
+                  Selected autonomous AI agents, computer vision models, and full-stack prototypes
+                </p>
+              </div>
+
+              {/* Category Filter Tabs */}
+              <div className="flex items-center gap-1.5 bg-white border border-slate-200 p-1.5 rounded-xl shadow-sm self-start md:self-auto">
+                {[
+                  { id: 'all', label: 'All Projects' },
+                  { id: 'ai', label: 'Agentic AI & LLMs' },
+                  { id: 'iot', label: 'CV & IoT' }
+                ].map(tab => (
+                  <button
+                    key={tab.id}
+                    onClick={() => setProjectCategory(tab.id)}
+                    className={`text-xs font-bold px-3 py-1.5 rounded-lg transition-all ${
+                      projectCategory === tab.id
+                        ? 'bg-indigo-600 text-white shadow-sm'
+                        : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                    }`}
+                  >
+                    {tab.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="grid lg:grid-cols-3 gap-8">
+              {filteredProjects.map((project) => (
+                <div
+                  key={project.id}
+                  className="bg-white border border-slate-200/90 rounded-2xl p-6 md:p-7 flex flex-col justify-between shadow-sm hover:shadow-2xl hover:-translate-y-1.5 border-t-4 border-t-indigo-500 transition-all duration-300 group"
+                >
+                  <div className="flex flex-col gap-4">
+                    
+                    {/* Card Header */}
+                    <div className="flex items-center justify-between">
+                      <span className="text-[10px] font-mono font-bold uppercase tracking-wider px-2.5 py-1 bg-indigo-50 text-indigo-700 border border-indigo-100 rounded-md">
+                        {project.categoryLabel}
+                      </span>
+                      <span className="text-xs font-mono text-slate-400 font-medium">
+                        {project.date}
+                      </span>
+                    </div>
+
+                    {/* Title & Tagline */}
+                    <div>
+                      <h3 className="text-xl font-bold text-slate-900 group-hover:text-indigo-600 transition-colors leading-snug">
+                        {project.title}
+                      </h3>
+                      <p className="text-xs font-medium text-slate-500 mt-1">
+                        {project.tagline}
+                      </p>
+                    </div>
+
+                    {/* Bullet Points */}
+                    <ul className="text-xs text-slate-600 space-y-2 list-disc pl-4 leading-relaxed border-t border-slate-100 pt-4">
+                      {project.bullets.map((bullet, idx) => (
+                        <li key={idx}>{bullet}</li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  {/* Tech Stack & Resume GitHub Source Code Link */}
+                  <div className="mt-6 pt-4 border-t border-slate-100 flex flex-col gap-4">
+                    <div className="flex flex-wrap gap-1.5">
+                      {project.tech.map((t) => (
+                        <span
+                          key={t}
+                          className="inline-flex items-center gap-1 px-2 py-1 bg-slate-50 border border-slate-200 rounded text-[11px] font-mono text-slate-700 font-medium"
+                        >
+                          <SkillIcon name={t} className="w-3.5 h-3.5" />
+                          {t}
+                        </span>
+                      ))}
+                    </div>
+
+                    <div className="flex items-center justify-between pt-2 border-t border-slate-100/80">
+                      <a
+                        href={project.github}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="inline-flex items-center gap-2 text-xs font-bold px-4 py-2 rounded-lg bg-indigo-50 hover:bg-indigo-600 text-indigo-700 hover:text-white border border-indigo-200 hover:border-indigo-600 transition-all font-mono shadow-sm group/btn"
+                      >
+                        <SkillIcon name="GitHub" className="w-4 h-4" />
+                        <span>View Source Code</span>
+                        <span className="text-xs group-hover/btn:translate-x-0.5 transition-transform">↗</span>
+                      </a>
+                    </div>
+                  </div>
+
+                </div>
               ))}
             </div>
-          </div>
+          </section>
 
-          <div className="relative z-10 flex justify-center items-center">
-            <DeveloperTerminal />
-          </div>
-        </section>
-      </div>
-    </div>
+          {/* ----------------------------------------------------------------------- */}
+          {/* 4. TECH STACK & SKILLS SECTION (ICON-ONLY GRID WITH HOVER TOOLTIPS)   */}
+          {/* ----------------------------------------------------------------------- */}
+          <section id="skills" className="flex flex-col gap-10 scroll-mt-28">
+            <div className="flex flex-col gap-2 border-l-4 border-indigo-600 pl-4">
+              <div className="text-xs font-mono font-bold text-indigo-600 uppercase tracking-widest">
+                Technology Toolbox
+              </div>
+              <h2 className="text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight">
+                Tech Stack
+              </h2>
+              <p className="text-sm text-slate-600">
+                Languages, Frontend & Fullstack, Backend & DB, Official AI logos (LangChain & LangGraph), and Hardware (Hover to reveal technology name)
+              </p>
+            </div>
 
-    {/* OTHER SECTIONS REGION */}
-    <div className="relative w-full bg-[#020306]">
-      {/* Background visual components for other sections */}
-      <div className="absolute inset-0 z-0 pointer-events-none opacity-25">
-        <DotGrid dotColor="140, 150, 180" />
-      </div>
-      <div className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] rounded-full bg-gradient-to-br from-[#4338ca]/10 to-[#312e81]/10 blur-[130px] pointer-events-none z-0" />
+            {/* Icon-Only Grid Component with Official Logos & Uniform 50px Sizing */}
+            <TechStackGrid />
+          </section>
 
-      {/* Main Container for sections below */}
-      <div className="relative z-10 max-w-6xl mx-auto px-6 py-20 md:py-32 flex flex-col gap-24 md:gap-36">
+          {/* ----------------------------------------------------------------------- */}
+          {/* 5. CERTIFICATES SECTION (FIRST ORACLE, THEN 4 ANTHROPIC COURSES)       */}
+          {/* ----------------------------------------------------------------------- */}
+          <section id="certificates" className="flex flex-col gap-10 scroll-mt-28">
+            <div className="flex flex-col gap-2 border-l-4 border-indigo-600 pl-4">
+              <div className="text-xs font-mono font-bold text-indigo-600 uppercase tracking-widest">
+                Credentials & Accreditation
+              </div>
+              <h2 className="text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight">
+                Certifications
+              </h2>
+              <p className="text-sm text-slate-600">
+                Verified certifications starting with Oracle Agentic AI followed by Anthropic Claude specializations
+              </p>
+            </div>
 
-        {/* EXPERIENCE SECTION */}
-        <section id="experience" className="flex flex-col gap-10">
-          <div className="flex flex-col gap-2">
-            <h2 className="text-2xl md:text-3xl font-bold tracking-tight text-white">Work & Research</h2>
-            <p className="text-xs md:text-sm text-[#64748b]">My recent internship and academic research records</p>
-          </div>
-
-          <div className="grid gap-8 max-w-4xl border-l border-[#1e293b] pl-6 md:pl-8 ml-3 relative">
-            {/* Loyalty Automation */}
-            <div className="relative group">
-              {/* Timeline marker */}
-              <div className="absolute -left-[31px] md:-left-[39px] top-1 w-[10px] h-[10px] rounded-full bg-indigo-500 border-2 border-[#020306] group-hover:scale-125 transition-all shadow-md shadow-indigo-500/50" />
-              
-              <div className="bg-[#080c14]/60 border border-[#1e293b]/80 p-6 rounded-xl backdrop-blur-sm group-hover:border-indigo-500/50 transition-all flex flex-col gap-3">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5">
-                  <div>
-                    <h3 className="text-base font-bold text-white group-hover:text-indigo-400 transition-colors">
-                      AI and Web Development Intern
-                    </h3>
-                    <div className="text-xs text-[#94a3b8] font-medium mt-0.5">
-                      Loyalty Automation Pvt Ltd, Chennai
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {certificatesData.map((cert) => (
+                <div
+                  key={cert.id}
+                  className={`bg-white border border-slate-200/90 rounded-2xl p-6 flex flex-col justify-between shadow-sm hover:shadow-xl transition-all duration-300 group border-l-4 ${cert.badgeColor}`}
+                >
+                  <div className="flex flex-col gap-3.5">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <span className={`text-[10px] font-mono font-bold px-2.5 py-0.5 rounded border ${cert.tagColor}`}>
+                          {cert.issuerTag}
+                        </span>
+                      </div>
+                      <span className="text-xs font-mono font-bold text-slate-400">
+                        {cert.date}
+                      </span>
                     </div>
+
+                    <div>
+                      <h3 className="text-base font-bold text-slate-900 group-hover:text-indigo-600 transition-colors leading-snug">
+                        {cert.title}
+                      </h3>
+                      <p className="text-[11px] text-slate-400 font-medium mt-0.5">
+                        Issuer: {cert.issuer}
+                      </p>
+                    </div>
+
+                    <p className="text-xs text-slate-600 leading-relaxed">
+                      {cert.desc}
+                    </p>
                   </div>
-                  <span className="text-[10px] font-mono font-semibold px-2.5 py-1 bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 rounded-md sm:self-start">
-                    May 2026 – Jun 2026
+
+                  <div className="mt-5 pt-3.5 border-t border-slate-100 flex items-center justify-end">
+                    <a
+                      href={cert.link}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="text-xs font-bold text-indigo-600 hover:text-indigo-800 font-mono transition-colors flex items-center gap-1"
+                    >
+                      <span>Verify</span>
+                      <span>↗</span>
+                    </a>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          {/* ----------------------------------------------------------------------- */}
+          {/* 6. EDUCATION SECTION                                                    */}
+          {/* ----------------------------------------------------------------------- */}
+          <section id="education" className="flex flex-col gap-10 scroll-mt-28">
+            <div className="flex flex-col gap-2 border-l-4 border-indigo-600 pl-4">
+              <div className="text-xs font-mono font-bold text-indigo-600 uppercase tracking-widest">
+                Academic Background
+              </div>
+              <h2 className="text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight">
+                Education
+              </h2>
+              <p className="text-sm text-slate-600">
+                Formal engineering degree and higher secondary education milestones
+              </p>
+            </div>
+
+            <div className="grid md:grid-cols-3 gap-6">
+              
+              {/* VIT Chennai */}
+              <div className="bg-white border border-slate-200 p-6 md:p-7 rounded-2xl shadow-sm hover:shadow-lg transition-all flex flex-col justify-between border-t-4 border-t-indigo-600">
+                <div className="flex flex-col gap-3">
+                  <span className="text-xs font-mono font-bold text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-md max-w-max">
+                    2023 – 2027
                   </span>
+                  <h3 className="text-lg font-bold text-slate-900">
+                    Vellore Institute of Technology, Chennai
+                  </h3>
+                  <p className="text-xs text-slate-600 font-medium">
+                    B.Tech in Electronics and Computer Engineering
+                  </p>
                 </div>
 
-                <ul className="text-xs text-[#94a3b8] space-y-2 list-disc pl-4 leading-relaxed mt-1">
-                  <li>
-                    Built and maintained a B2B product catalog platform using <strong className="text-[#f1f5f9]">Next.js, Express.js, and MongoDB</strong>. Integrated the inquiry system with the company CRM for automated lead capture.
-                  </li>
-                  <li>
-                    Developed an <strong className="text-[#f1f5f9]">agentic AI chatbot</strong> with <strong className="text-[#f1f5f9]">LangGraph + Groq</strong>, enabling product search and inquiry-quotation submission via natural language, deployed with <code className="text-[10px] font-mono text-indigo-300 bg-[#0d121f] px-1.5 py-0.5 rounded">llama-4-scout-17b-16e-instruct</code>.
-                  </li>
-                </ul>
-              </div>
-            </div>
-
-            {/* CADS VIT Chennai */}
-            <div className="relative group">
-              {/* Timeline marker */}
-              <div className="absolute -left-[31px] md:-left-[39px] top-1 w-[10px] h-[10px] rounded-full bg-indigo-500 border-2 border-[#020306] group-hover:scale-125 transition-all shadow-md shadow-indigo-500/50" />
-              
-              <div className="bg-[#080c14]/60 border border-[#1e293b]/80 p-6 rounded-xl backdrop-blur-sm group-hover:border-indigo-500/50 transition-all flex flex-col gap-3">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5">
-                  <div>
-                    <h3 className="text-base font-bold text-white group-hover:text-indigo-400 transition-colors">
-                      Research Intern
-                    </h3>
-                    <div className="text-xs text-[#94a3b8] font-medium mt-0.5">
-                      Centre for Advanced Data Science (CADS), VIT Chennai
-                    </div>
-                  </div>
-                  <span className="text-[10px] font-mono font-semibold px-2.5 py-1 bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 rounded-md sm:self-start">
-                    Jun 2024 – Nov 2024
+                <div className="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between">
+                  <span className="text-xs text-slate-500 font-medium">Cumulative Grade</span>
+                  <span className="text-sm font-mono font-extrabold text-emerald-700 bg-emerald-50 px-3 py-1 rounded-lg border border-emerald-200">
+                    CGPA: 8.85
                   </span>
                 </div>
-
-                <ul className="text-xs text-[#94a3b8] space-y-2 list-disc pl-4 leading-relaxed mt-1">
-                  <li>
-                    Developed a deep-sea image segmentation framework in collaboration with NIOT for polymetallic nodule detection, achieving <strong className="text-[#f1f5f9]">97.90% accuracy using SAM 2.1</strong> with custom annotated datasets.
-                  </li>
-                  <li>
-                    Presented the work at the <strong className="text-[#f1f5f9]">7th International Conference on Ocean Engineering (ICOE 2025)</strong>.
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* PROJECTS SECTION */}
-        <section id="projects" className="flex flex-col gap-10">
-          <div className="flex flex-col gap-2">
-            <h2 className="text-2xl md:text-3xl font-bold tracking-tight text-white">Featured Projects</h2>
-            <p className="text-xs md:text-sm text-[#64748b]">Selected applications and systems built recently</p>
-          </div>
-
-          <div className="grid md:grid-cols-2 gap-6 max-w-5xl">
-            {/* South Indian Nutrition Advisor */}
-            <div className="group bg-[#080c14]/65 border border-[#1e293b]/80 rounded-xl p-6 flex flex-col gap-4 hover:border-indigo-500/50 hover:shadow-lg hover:shadow-indigo-500/5 transition-all">
-              <div className="flex items-center justify-between">
-                <span className="text-[9px] font-mono uppercase bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 px-2 py-0.5 rounded font-bold tracking-wider">
-                  Agentic AI & LLMs
-                </span>
-                <a
-                  href="https://github.com"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="text-[#94a3b8] hover:text-white text-xs flex items-center gap-1 font-mono transition-colors"
-                >
-                  GitHub ↗
-                </a>
               </div>
 
-              <div className="flex flex-col gap-1.5">
-                <h3 className="text-lg font-bold text-white group-hover:text-indigo-400 transition-colors">
-                  South Indian Nutrition Advisor
-                </h3>
-                <p className="text-xs text-[#94a3b8] leading-relaxed">
-                  An AI-powered meal recommendations assistant tailored for South Indian cuisine, processing food ingredient logs and delivering email reports automatically.
-                </p>
-              </div>
-
-              <ul className="text-xs text-[#94a3b8] list-disc pl-4 space-y-1 mt-1 flex-1 leading-relaxed">
-                <li>Uses <strong className="text-[#f1f5f9]">Google Gemini & LangGraph</strong> for multi-step food analysis and custom dietary guides.</li>
-                <li>Automates deliveries of personalized dietary PDF reviews via secure SMTP protocols with zero manual intervention.</li>
-              </ul>
-
-              <div className="flex flex-wrap gap-1.5 pt-3 border-t border-[#1e293b]/40">
-                {['Python', 'Gemini API', 'LangGraph', 'Agentic AI', 'SMTP'].map((tech) => (
-                  <span key={tech} className="inline-flex items-center gap-1.5 px-2 py-1 bg-[#04060a]/90 border border-[#1e293b] rounded text-[10px] font-mono text-[#64748b] hover:text-white cursor-default transition-colors">
-                    <SkillIcon name={tech} className="w-3 h-3" />
-                    {tech}
+              {/* Sri Chaitanya - Class 12 */}
+              <div className="bg-white border border-slate-200 p-6 md:p-7 rounded-2xl shadow-sm hover:shadow-lg transition-all flex flex-col justify-between border-t-4 border-t-purple-600">
+                <div className="flex flex-col gap-3">
+                  <span className="text-xs font-mono font-bold text-purple-600 bg-purple-50 px-2.5 py-1 rounded-md max-w-max">
+                    2022 – 2023
                   </span>
-                ))}
-              </div>
-            </div>
+                  <h3 className="text-lg font-bold text-slate-900">
+                    Sri Chaitanya Techno School, Mylapore
+                  </h3>
+                  <p className="text-xs text-slate-600 font-medium">
+                    Class 12 Higher Secondary Education
+                  </p>
+                </div>
 
-            {/* Smart Elevator Prototype */}
-            <div className="group bg-[#080c14]/65 border border-[#1e293b]/80 rounded-xl p-6 flex flex-col gap-4 hover:border-indigo-500/50 hover:shadow-lg hover:shadow-indigo-500/5 transition-all">
-              <div className="flex items-center justify-between">
-                <span className="text-[9px] font-mono uppercase bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded font-bold tracking-wider">
-                  IoT & Computer Vision
-                </span>
-                <a
-                  href="https://github.com"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="text-[#94a3b8] hover:text-white text-xs flex items-center gap-1 font-mono transition-colors"
-                >
-                  GitHub ↗
-                </a>
-              </div>
-
-              <div className="flex flex-col gap-1.5">
-                <h3 className="text-lg font-bold text-white group-hover:text-indigo-400 transition-colors">
-                  Smart Elevator Automation
-                </h3>
-                <p className="text-xs text-[#94a3b8] leading-relaxed">
-                  An embedded IoT system prototyping modern elevator control using computer vision algorithms to detect occupant numbers and optimize lift routing in high-rise buildings.
-                </p>
-              </div>
-
-              <ul className="text-xs text-[#94a3b8] list-disc pl-4 space-y-1 mt-1 flex-1 leading-relaxed">
-                <li>Built core routing firmware on <strong className="text-[#f1f5f9]">Raspberry Pi</strong> interfaces with integrated ultrasonic and motion detector sensors.</li>
-                <li>Utilized <strong className="text-[#f1f5f9]">OpenCV</strong> algorithms for real-time occupant detection and smart queue optimization.</li>
-              </ul>
-
-              <div className="flex flex-wrap gap-1.5 pt-3 border-t border-[#1e293b]/40">
-                {['OpenCV', 'Python', 'Raspberry Pi', 'IoT', 'Computer Vision'].map((tech) => (
-                  <span key={tech} className="inline-flex items-center gap-1.5 px-2 py-1 bg-[#04060a]/90 border border-[#1e293b] rounded text-[10px] font-mono text-[#64748b] hover:text-white cursor-default transition-colors">
-                    <SkillIcon name={tech} className="w-3 h-3" />
-                    {tech}
+                <div className="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between">
+                  <span className="text-xs text-slate-500 font-medium">Board Score</span>
+                  <span className="text-sm font-mono font-extrabold text-indigo-700 bg-indigo-50 px-3 py-1 rounded-lg border border-indigo-200">
+                    92%
                   </span>
-                ))}
+                </div>
               </div>
+
+              {/* Sri Chaitanya - Class 10 */}
+              <div className="bg-white border border-slate-200 p-6 md:p-7 rounded-2xl shadow-sm hover:shadow-lg transition-all flex flex-col justify-between border-t-4 border-t-sky-600">
+                <div className="flex flex-col gap-3">
+                  <span className="text-xs font-mono font-bold text-sky-600 bg-sky-50 px-2.5 py-1 rounded-md max-w-max">
+                    2020 – 2021
+                  </span>
+                  <h3 className="text-lg font-bold text-slate-900">
+                    Sri Chaitanya Techno School, K K Nagar
+                  </h3>
+                  <p className="text-xs text-slate-600 font-medium">
+                    Class 10 Secondary Education
+                  </p>
+                </div>
+
+                <div className="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between">
+                  <span className="text-xs text-slate-500 font-medium">Board Score</span>
+                  <span className="text-sm font-mono font-extrabold text-sky-700 bg-sky-50 px-3 py-1 rounded-lg border border-sky-200">
+                    97.8%
+                  </span>
+                </div>
+              </div>
+
             </div>
-          </div>
-        </section>
+          </section>
 
-        {/* SKILLS SECTION */}
-        <section id="skills" className="flex flex-col gap-10">
-          <div className="flex flex-col gap-2">
-            <h2 className="text-2xl md:text-3xl font-bold tracking-tight text-white">Technical Skills</h2>
-            <p className="text-xs md:text-sm text-[#64748b]">My core engineering toolbox</p>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-6 max-w-5xl">
-            {/* AI/ML */}
-            <div className="bg-[#080c14]/50 border border-[#1e293b]/80 p-6 rounded-xl flex flex-col gap-4">
-              <h3 className="text-sm font-bold uppercase tracking-wider text-indigo-400 font-mono">AI & Machine Learning</h3>
-              <div className="flex flex-col gap-3">
-                {skills.filter(s => s.category === 'AI/ML').map(s => (
-                  <div key={s.name} className="flex justify-between items-center text-xs">
-                    <span className="flex items-center gap-2.5 text-[#f1f5f9]">
-                      <SkillIcon name={s.name} className="w-4 h-4 shrink-0" />
-                      {s.name}
-                    </span>
-                    <span className="text-[10px] text-indigo-300 bg-indigo-500/10 border border-indigo-500/20 px-2 py-0.5 rounded font-mono">Expert</span>
-                  </div>
-                ))}
+          {/* ----------------------------------------------------------------------- */}
+          {/* 7. CONTACT SECTION                                                      */}
+          {/* ----------------------------------------------------------------------- */}
+          <section id="contact" className="flex flex-col gap-10 border-t border-slate-200 pt-16 mb-8 scroll-mt-28">
+            <div className="flex flex-col gap-2 border-l-4 border-indigo-600 pl-4">
+              <div className="text-xs font-mono font-bold text-indigo-600 uppercase tracking-widest">
+                Get In Touch
               </div>
-            </div>
-
-            {/* Programming */}
-            <div className="bg-[#080c14]/50 border border-[#1e293b]/80 p-6 rounded-xl flex flex-col gap-4">
-              <h3 className="text-sm font-bold uppercase tracking-wider text-emerald-400 font-mono">Languages</h3>
-              <div className="flex flex-col gap-3">
-                {skills.filter(s => s.category === 'Programming').map(s => (
-                  <div key={s.name} className="flex justify-between items-center text-xs">
-                    <span className="flex items-center gap-2.5 text-[#f1f5f9]">
-                      <SkillIcon name={s.name} className="w-4 h-4 shrink-0" />
-                      {s.name}
-                    </span>
-                    <span className="text-[10px] text-emerald-300 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded font-mono">Fluent</span>
-                  </div>
-                ))}
-              </div>
+              <h2 className="text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight">
+                Contact & Links
+              </h2>
+              <p className="text-sm text-slate-600">
+                Available for AI development roles, software engineering internships, and research collaborations
+              </p>
             </div>
 
-            {/* Tools & Frameworks */}
-            <div className="bg-[#080c14]/50 border border-[#1e293b]/80 p-6 rounded-xl flex flex-col gap-4">
-              <h3 className="text-sm font-bold uppercase tracking-wider text-sky-400 font-mono">Tools & Web Stacks</h3>
-              <div className="flex flex-col gap-3">
-                {skills.filter(s => s.category === 'Tools').map(s => (
-                  <div key={s.name} className="flex justify-between items-center text-xs">
-                    <span className="flex items-center gap-2.5 text-[#f1f5f9]">
-                      <SkillIcon name={s.name} className="w-4 h-4 shrink-0" />
-                      {s.name}
-                    </span>
-                    <span className="text-[10px] text-sky-300 bg-sky-500/10 border border-sky-500/20 px-2 py-0.5 rounded font-mono">Advanced</span>
-                  </div>
-                ))}
-              </div>
+            <div className="grid sm:grid-cols-3 gap-5">
+              
+              {/* Email */}
+              <button
+                onClick={() => copyToClipboard('nagarjun1302@gmail.com', 'Email')}
+                className="bg-white border border-slate-200 p-6 rounded-2xl shadow-sm hover:shadow-xl hover:border-indigo-500 transition-all text-left group flex flex-col gap-3"
+              >
+                <div className="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center text-indigo-600 group-hover:scale-110 transition-transform">
+                  ✉
+                </div>
+                <div>
+                  <span className="text-[10px] font-mono text-slate-400 font-bold uppercase tracking-wider">Email</span>
+                  <h4 className="text-sm font-bold text-slate-900 group-hover:text-indigo-600 transition-colors truncate">
+                    nagarjun1302@gmail.com
+                  </h4>
+                  <span className="text-[10px] text-indigo-600 font-semibold mt-1 inline-block">Click to copy</span>
+                </div>
+              </button>
+
+              {/* GitHub */}
+              <a
+                href="https://github.com/nagarjun1302"
+                target="_blank"
+                rel="noreferrer"
+                className="bg-white border border-slate-200 p-6 rounded-2xl shadow-sm hover:shadow-xl hover:border-indigo-500 transition-all group flex flex-col gap-3"
+              >
+                <div className="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-900 group-hover:scale-110 transition-transform">
+                  <SkillIcon name="GitHub" className="w-5 h-5" />
+                </div>
+                <div>
+                  <span className="text-[10px] font-mono text-slate-400 font-bold uppercase tracking-wider">GitHub</span>
+                  <h4 className="text-sm font-bold text-slate-900 group-hover:text-indigo-600 transition-colors">
+                    github.com/nagarjun1302
+                  </h4>
+                  <span className="text-[10px] text-slate-500 font-semibold mt-1 inline-block">Open profile ↗</span>
+                </div>
+              </a>
+
+              {/* LinkedIn */}
+              <a
+                href="https://www.linkedin.com/in/nagarjun-p-b698852a0/"
+                target="_blank"
+                rel="noreferrer"
+                className="bg-white border border-slate-200 p-6 rounded-2xl shadow-sm hover:shadow-xl hover:border-indigo-500 transition-all group flex flex-col gap-3"
+              >
+                <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600 group-hover:scale-110 transition-transform">
+                  🔗
+                </div>
+                <div>
+                  <span className="text-[10px] font-mono text-slate-400 font-bold uppercase tracking-wider">LinkedIn</span>
+                  <h4 className="text-sm font-bold text-slate-900 group-hover:text-blue-600 transition-colors">
+                    linkedin.com/in/nagarjun-p
+                  </h4>
+                  <span className="text-[10px] text-blue-600 font-semibold mt-1 inline-block">Open profile ↗</span>
+                </div>
+              </a>
+
             </div>
-          </div>
-        </section>
+          </section>
 
-        {/* EDUCATION SECTION */}
-        <section className="bg-[#080c14]/40 border border-[#1e293b]/80 rounded-xl p-8 max-w-4xl flex flex-col sm:flex-row justify-between gap-6">
-          <div className="flex flex-col gap-1">
-            <div className="text-[10px] font-mono text-indigo-400 uppercase tracking-widest font-bold">Academic Background</div>
-            <h3 className="text-lg font-bold text-white">Vellore Institute of Technology, Chennai</h3>
-            <p className="text-xs text-[#94a3b8] mt-0.5">B.Tech in Electronics and Computer Engineering</p>
-          </div>
-          <div className="flex flex-col sm:items-end justify-between gap-2">
-            <span className="text-[10px] font-mono font-semibold px-2.5 py-1 bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 rounded-md self-start sm:self-auto">
-              2023 – 2027
-            </span>
-            <div className="text-xs font-mono text-emerald-400 font-semibold bg-emerald-500/5 border border-emerald-500/10 px-3 py-1 rounded">
-              CGPA: 8.85
-            </div>
-          </div>
-        </section>
+        </div>
+      </main>
 
-        {/* CONTACT SECTION */}
-        <section id="contact" className="flex flex-col gap-10 border-t border-[#1e293b]/50 pt-16 mb-16">
-          <div className="flex flex-col gap-2">
-            <h2 className="text-2xl md:text-3xl font-bold tracking-tight text-white">Let's Connect</h2>
-            <p className="text-xs md:text-sm text-[#64748b]">Get in touch for internships, collaborations, or opportunities</p>
-          </div>
-
-          <div className="flex flex-wrap gap-4 md:gap-6">
-            <a
-              href="mailto:nagarjun1302@gmail.com"
-              className="flex items-center gap-3 bg-[#080c14]/70 border border-[#1e293b]/80 px-6 py-4 rounded-xl hover:border-indigo-500 hover:bg-[#0d1322] transition-all group"
-            >
-              <span className="text-base group-hover:scale-110 transition-transform">✉</span>
-              <div className="flex flex-col text-left">
-                <span className="text-[10px] font-mono text-[#64748b] uppercase font-bold tracking-wider">Email Me</span>
-                <span className="text-xs text-[#e2e8f0] font-medium">nagarjun1302@gmail.com</span>
-              </div>
-            </a>
-
-            <a
-              href="tel:+919789051809"
-              className="flex items-center gap-3 bg-[#080c14]/70 border border-[#1e293b]/80 px-6 py-4 rounded-xl hover:border-indigo-500 hover:bg-[#0d1322] transition-all group"
-            >
-              <span className="text-base group-hover:scale-110 transition-transform">📞</span>
-              <div className="flex flex-col text-left">
-                <span className="text-[10px] font-mono text-[#64748b] uppercase font-bold tracking-wider">Call Me</span>
-                <span className="text-xs text-[#e2e8f0] font-medium">+91 9789051809</span>
-              </div>
-            </a>
-
-            <a
-              href="https://github.com"
-              target="_blank"
-              rel="noreferrer"
-              className="flex items-center gap-3 bg-[#080c14]/70 border border-[#1e293b]/80 px-6 py-4 rounded-xl hover:border-indigo-500 hover:bg-[#0d1322] transition-all group"
-            >
-              <span className="text-base group-hover:scale-110 transition-transform">💻</span>
-              <div className="flex flex-col text-left">
-                <span className="text-[10px] font-mono text-[#64748b] uppercase font-bold tracking-wider">GitHub</span>
-                <span className="text-xs text-[#e2e8f0] font-medium">github.com/nagarjun</span>
-              </div>
-            </a>
-
-            <a
-              href="https://linkedin.com"
-              target="_blank"
-              rel="noreferrer"
-              className="flex items-center gap-3 bg-[#080c14]/70 border border-[#1e293b]/80 px-6 py-4 rounded-xl hover:border-indigo-500 hover:bg-[#0d1322] transition-all group"
-            >
-              <span className="text-base group-hover:scale-110 transition-transform">🔗</span>
-              <div className="flex flex-col text-left">
-                <span className="text-[10px] font-mono text-[#64748b] uppercase font-bold tracking-wider">LinkedIn</span>
-                <span className="text-xs text-[#e2e8f0] font-medium">linkedin.com/in/nagarjun</span>
-              </div>
-            </a>
-          </div>
-        </section>
-      </div>
+      {/* ========================================================================= */}
+      {/* FOOTER                                                                    */}
+      {/* ========================================================================= */}
+      <footer className="border-t border-slate-200 py-8 bg-white text-center text-xs font-mono text-slate-500">
+  <div className="max-w-6xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-center gap-4">
+    <div>
+      Designed & Built by Nagarjun.
     </div>
+  </div>
+</footer>
 
-    {/* Footer copyright */}
-    <footer className="border-t border-[#1e293b]/30 py-8 text-center text-[10px] font-mono text-[#475569] relative z-10 bg-[#020306]">
-      © {new Date().getFullYear()} P Nagarjun. All rights reserved. Designed with tactile grids & morphing systems.
-    </footer>
-  </main>
-);
+    </div>
+  );
 }
