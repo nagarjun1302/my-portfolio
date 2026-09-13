@@ -53,7 +53,6 @@ export default function App() {
       tagline: 'AI-Powered Dietary & Glycemic Risk Assessment System',
       category: 'ai',
       categoryLabel: 'Agentic AI & LLMs',
-      date: 'Jul. 2026 – Aug. 2026',
       github: 'https://github.com/nagarjun1302/south-indian-nutrition-advisor',
       bullets: [
         'Built an end-to-end AI nutrition advisor tailored for South Indian cuisine using Google Gemini and LangChain for multi-step meal analysis, glycemic risk assessment, and ingredient-level dietary recommendations.',
@@ -68,7 +67,6 @@ export default function App() {
       tagline: 'Self-Coordinating LLM Framework for Full Codebase Synthesis',
       category: 'ai',
       categoryLabel: 'Agentic AI & LLMs',
-      date: 'Jun. 2026 – Jul. 2026',
       github: 'https://github.com/nagarjun1302/agentriq-ai',
       bullets: [
         'Developed a multi-agent AI framework using LangGraph that converts a natural language prompt into a fully generated codebase via coordinated Planner, Architect, Coder, and Reviewer agents.',
@@ -83,7 +81,6 @@ export default function App() {
       tagline: 'Embedded IoT & Computer Vision Lift Dispatcher',
       category: 'iot',
       categoryLabel: 'IoT & Computer Vision',
-      date: 'Mar. 2024 – Apr. 2024',
       github: 'https://github.com/nagarjun1302/smart-elevator-automation',
       bullets: [
         'Built a smart elevator system using Raspberry Pi, PIR, ultrasonic sensors, and OpenCV-based computer vision for real-time occupant detection and intelligent floor-stopping.',
@@ -131,15 +128,15 @@ export default function App() {
       link: 'https://verify.skilljar.com/c/sh5ux32pbeyo'
     },
     {
-      id: 'custom-tools',
-      title: 'Building Custom Tools for Claude',
+      id: 'agent-skills',
+      title: 'Introduction to agent skills',
       issuer: 'Anthropic',
       issuerTag: 'Anthropic',
       date: 'Jul. 2026',
       desc: 'Specialized training on function calling, API tool definitions, JSON schema parameters, and agentic execution pipelines with Claude.',
       badgeColor: 'border-l-indigo-600 hover:border-indigo-500',
       tagColor: 'bg-indigo-50 text-indigo-700 border-indigo-100',
-      link: 'https://verify.skilljar.com/c/sh5ux32pbeyo'
+      link: 'https://verify.skilljar.com/c/nvu6h8khrfka'
     },
     {
       id: 'mcp-intro',
