@@ -17,7 +17,7 @@ const terminalLogs = [
 export default function DeveloperTerminal() {
   const [logs, setLogs] = useState([]);
   const [currentLogIndex, setCurrentLogIndex] = useState(0);
-  const [selectedFile, setSelectedFile] = useState('agent_system.py');
+  const [selectedFile, setSelectedFile] = useState('spec.json');
   const logContainerRef = useRef(null);
 
   useEffect(() => {
@@ -77,6 +77,14 @@ export default function DeveloperTerminal() {
 
               <div className="flex flex-col gap-1 text-[11px]">
                 <button
+                  onClick={() => setSelectedFile('spec.json')}
+                  className={`flex items-center gap-1.5 px-2 py-1.5 rounded transition-all text-left ${
+                    selectedFile === 'spec.json' ? 'bg-[#333333] text-emerald-300 border border-[#4a4a4a] font-semibold' : 'text-slate-400 hover:text-slate-200'
+                  }`}
+                >
+                  <span className="text-sky-400">📋</span> spec.json
+                </button>
+                <button
                   onClick={() => setSelectedFile('agent_system.py')}
                   className={`flex items-center gap-1.5 px-2 py-1.5 rounded transition-all text-left ${
                     selectedFile === 'agent_system.py' ? 'bg-[#333333] text-emerald-300 border border-[#4a4a4a] font-semibold' : 'text-slate-400 hover:text-slate-200'
@@ -91,14 +99,6 @@ export default function DeveloperTerminal() {
                   }`}
                 >
                   <span className="text-purple-400">🧠</span> sam_seg.py
-                </button>
-                <button
-                  onClick={() => setSelectedFile('spec.json')}
-                  className={`flex items-center gap-1.5 px-2 py-1.5 rounded transition-all text-left ${
-                    selectedFile === 'spec.json' ? 'bg-[#333333] text-emerald-300 border border-[#4a4a4a] font-semibold' : 'text-slate-400 hover:text-slate-200'
-                  }`}
-                >
-                  <span className="text-sky-400">📋</span> spec.json
                 </button>
               </div>
             </div>
@@ -115,6 +115,16 @@ export default function DeveloperTerminal() {
           <div className="editor-area bg-[#1e1e1e] p-3.5 overflow-y-auto flex flex-col gap-3 scrollbar-thin select-text">
             {/* Header Code Spec Snippet based on selection */}
             <div className="bg-[#181818] border border-[#3a3a3a] p-3 rounded-md text-[11px] leading-relaxed text-slate-300 font-mono shrink-0">
+              {selectedFile === 'spec.json' && (
+                <>
+                  <span className="text-slate-400">{"{"}</span><br />
+                  &nbsp;&nbsp;<span className="text-sky-300">"name"</span>: <span className="text-amber-300">"Nagarjun"</span>,<br />
+                  &nbsp;&nbsp;<span className="text-sky-300">"degree"</span>: <span className="text-amber-300">"B.Tech ECM @ VIT Chennai"</span>,<br />
+                  &nbsp;&nbsp;<span className="text-sky-300">"cgpa"</span>: <span className="text-emerald-400">8.85</span>,<br />
+                  &nbsp;&nbsp;<span className="text-sky-300">"specialization"</span>: [<span className="text-amber-300">"Agentic AI"</span>, <span className="text-amber-300">"End-to-End Applications"</span>]<br />
+                  <span className="text-slate-400">{"}"}</span>
+                </>
+              )}
               {selectedFile === 'agent_system.py' && (
                 <>
                   <span className="text-purple-400">from</span> <span className="text-sky-300">langgraph.graph</span> <span className="text-purple-400">import</span> StateGraph<br />
@@ -129,16 +139,6 @@ export default function DeveloperTerminal() {
                   <span className="text-purple-400">from</span> <span className="text-sky-300">segment_anything</span> <span className="text-purple-400">import</span> sam_model_registry<br />
                   <span className="text-emerald-400"># Deep-Sea Polymetallic Nodule Detection</span><br />
                   <span className="text-orange-300">accuracy</span> = <span className="text-emerald-400">97.90</span> <span className="text-slate-500"># NIOT Collaboration</span>
-                </>
-              )}
-              {selectedFile === 'spec.json' && (
-                <>
-                  <span className="text-slate-400">{"{"}</span><br />
-                  &nbsp;&nbsp;<span className="text-sky-300">"name"</span>: <span className="text-amber-300">"Nagarjun"</span>,<br />
-                  &nbsp;&nbsp;<span className="text-sky-300">"degree"</span>: <span className="text-amber-300">"B.Tech ECM @ VIT Chennai"</span>,<br />
-                  &nbsp;&nbsp;<span className="text-sky-300">"cgpa"</span>: <span className="text-emerald-400">8.85</span>,<br />
-                  &nbsp;&nbsp;<span className="text-sky-300">"specialization"</span>: [<span className="text-amber-300">"Agentic AI"</span>, <span className="text-amber-300">"End-to-End Applications"</span>]<br />
-                  <span className="text-slate-400">{"}"}</span>
                 </>
               )}
             </div>
