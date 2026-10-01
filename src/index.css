@@ -7,6 +7,11 @@
     --primary: 263.4 70% 50.4%;
     --font-sans: 'Outfit', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
     --font-mono: 'JetBrains Mono', monospace;
+
+    /* Emil Kowalski motion tokens */
+    --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+    --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+    --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
   }
 
   * {
@@ -28,11 +33,95 @@
   }
 }
 
+/* Tactile press feedback for buttons, chips, and interactive links */
+.btn-press {
+  transition: transform 140ms var(--ease-out);
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+
+.btn-press:active {
+  transform: scale(0.97);
+}
+
+/* Card hover lift - gated for fine pointers only */
+@media (hover: hover) and (pointer: fine) {
+  .hover-lift {
+    transition: transform 200ms var(--ease-out), box-shadow 200ms var(--ease-out), border-color 200ms ease;
+  }
+  .hover-lift:hover {
+    transform: translateY(-4px);
+  }
+}
+
+/* Toast notification enter / exit transitions */
+.toast-enter {
+  animation: toastSlideIn 200ms var(--ease-out) forwards;
+}
+
+.toast-exit {
+  animation: toastSlideOut 160ms ease-in forwards;
+}
+
+@keyframes toastSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes toastSlideOut {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(12px) scale(0.96);
+  }
+}
+
+/* Filtering entrance animation to prevent teleporting content */
+.filter-item-enter {
+  animation: filterFadeScale 200ms var(--ease-out) backwards;
+}
+
+@keyframes filterFadeScale {
+  from {
+    opacity: 0;
+    transform: scale(0.97) translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* Terminal stream log line entrance */
+.log-line-enter {
+  animation: logLineIn 140ms var(--ease-out) forwards;
+}
+
+@keyframes logLineIn {
+  from {
+    opacity: 0;
+    transform: translateY(3px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 /* Custom terminal design */
 .terminal-shell {
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6), 
               0 0 50px 0px rgba(99, 102, 241, 0.2);
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  transition: border-color 200ms var(--ease-out), box-shadow 200ms var(--ease-out);
 }
 
 .terminal-shell:hover {
@@ -77,4 +166,30 @@
 .backdrop-blur-md {
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
+}
+
+/* Accessibility: prefers-reduced-motion overrides */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    scroll-behavior: auto !important;
+  }
+
+  .toast-enter,
+  .toast-exit,
+  .filter-item-enter,
+  .log-line-enter {
+    animation: none !important;
+    transform: none !important;
+    opacity: 1 !important;
+  }
+
+  .btn-press:active,
+  .hover-lift:hover {
+    transform: none !important;
+  }
+
+  .interactive-3d-card {
+    transform: none !important;
+    transition: none !important;
+  }
 }

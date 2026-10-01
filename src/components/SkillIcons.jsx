@@ -1,4 +1,3 @@
-import React from 'react';
 
 export default function SkillIcon({ name, className = 'w-5 h-5' }) {
   const normName = (name || '').toLowerCase().trim();

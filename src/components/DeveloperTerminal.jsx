@@ -78,7 +78,7 @@ export default function DeveloperTerminal() {
               <div className="flex flex-col gap-1 text-[11px]">
                 <button
                   onClick={() => setSelectedFile('spec.json')}
-                  className={`flex items-center gap-1.5 px-2 py-1.5 rounded transition-all text-left ${
+                  className={`btn-press flex items-center gap-1.5 px-2 py-1.5 rounded text-left transition-colors duration-150 ${
                     selectedFile === 'spec.json' ? 'bg-[#333333] text-emerald-300 border border-[#4a4a4a] font-semibold' : 'text-slate-400 hover:text-slate-200'
                   }`}
                 >
@@ -86,7 +86,7 @@ export default function DeveloperTerminal() {
                 </button>
                 <button
                   onClick={() => setSelectedFile('agent_system.py')}
-                  className={`flex items-center gap-1.5 px-2 py-1.5 rounded transition-all text-left ${
+                  className={`btn-press flex items-center gap-1.5 px-2 py-1.5 rounded text-left transition-colors duration-150 ${
                     selectedFile === 'agent_system.py' ? 'bg-[#333333] text-emerald-300 border border-[#4a4a4a] font-semibold' : 'text-slate-400 hover:text-slate-200'
                   }`}
                 >
@@ -94,7 +94,7 @@ export default function DeveloperTerminal() {
                 </button>
                 <button
                   onClick={() => setSelectedFile('sam_seg.py')}
-                  className={`flex items-center gap-1.5 px-2 py-1.5 rounded transition-all text-left ${
+                  className={`btn-press flex items-center gap-1.5 px-2 py-1.5 rounded text-left transition-colors duration-150 ${
                     selectedFile === 'sam_seg.py' ? 'bg-[#333333] text-emerald-300 border border-[#4a4a4a] font-semibold' : 'text-slate-400 hover:text-slate-200'
                   }`}
                 >
@@ -114,7 +114,7 @@ export default function DeveloperTerminal() {
           {/* Editor & Console Output Area */}
           <div className="editor-area bg-[#1e1e1e] p-3.5 overflow-y-auto flex flex-col gap-3 scrollbar-thin select-text">
             {/* Header Code Spec Snippet based on selection */}
-            <div className="bg-[#181818] border border-[#3a3a3a] p-3 rounded-md text-[11px] leading-relaxed text-slate-300 font-mono shrink-0">
+            <div key={selectedFile} className="bg-[#181818] border border-[#3a3a3a] p-3 rounded-md text-[11px] leading-relaxed text-slate-300 font-mono shrink-0 filter-item-enter">
               {selectedFile === 'spec.json' && (
                 <>
                   <span className="text-slate-400">{"{"}</span><br />
@@ -157,7 +157,7 @@ export default function DeveloperTerminal() {
                 if (log.type === "accent") colorClass = "text-amber-300 font-semibold";
 
                 return (
-                  <div key={index} className={`font-mono leading-relaxed break-all ${colorClass}`}>
+                  <div key={index} className={`font-mono leading-relaxed break-all log-line-enter ${colorClass}`}>
                     {log.text}
                   </div>
                 );

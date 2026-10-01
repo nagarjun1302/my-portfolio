@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 // Official Vector Paths for Standard Technologies
 const OFFICIAL_ICON_PATHS = {
@@ -182,9 +182,9 @@ export default function TechStackGrid() {
           <button
             key={btn.id}
             onClick={() => setActiveCategory(btn.id)}
-            className={`text-xs font-bold px-4 py-2 rounded-full transition-all duration-200 ${
+            className={`btn-press text-xs font-bold px-4 py-2 rounded-full transition-colors duration-150 ${
               activeCategory === btn.id
-                ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/20 scale-105'
+                ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/20'
                 : 'bg-white text-slate-600 border border-slate-200 hover:border-slate-300 hover:text-slate-900 hover:bg-slate-50'
             }`}
           >
@@ -194,19 +194,20 @@ export default function TechStackGrid() {
       </div>
 
       {/* Responsive Grid of Cards - Only Icon Visible by Default */}
-      <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-4 md:gap-5 justify-items-center">
-        {filteredTech.map((tech) => (
+      <div key={activeCategory} className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-4 md:gap-5 justify-items-center">
+        {filteredTech.map((tech, idx) => (
           <div
             key={tech.name}
-            className="group relative flex items-center justify-center w-24 h-24 sm:w-28 sm:h-28 bg-white border border-slate-200/90 rounded-2xl shadow-sm hover:shadow-xl hover:border-indigo-400 hover:-translate-y-1.5 transition-all duration-300 cursor-pointer"
+            style={{ animationDelay: `${Math.min(idx * 25, 150)}ms` }}
+            className="filter-item-enter group relative flex items-center justify-center w-24 h-24 sm:w-28 sm:h-28 bg-white border border-slate-200/90 rounded-2xl shadow-sm hover-lift hover:border-indigo-400 cursor-pointer"
           >
             {/* Strictly Uniform 50px x 50px Icon Container */}
-            <div className="w-[50px] h-[50px] flex items-center justify-center transform group-hover:scale-110 transition-transform duration-300">
+            <div className="w-[50px] h-[50px] flex items-center justify-center transform group-hover:scale-105 transition-transform duration-200">
               <TechIcon iconKey={tech.iconKey} />
             </div>
 
-            {/* Smooth Styled Tooltip (Appears on Hover) */}
-            <div className="absolute -top-11 left-1/2 -translate-x-1/2 pointer-events-none opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 transition-all duration-300 z-30">
+            {/* Smooth Styled Tooltip (Origin-aware, snappy 140ms ease-out) */}
+            <div className="absolute -top-11 left-1/2 -translate-x-1/2 pointer-events-none opacity-0 group-hover:opacity-100 transform scale-95 translate-y-1.5 group-hover:scale-100 group-hover:translate-y-0 transition-[transform,opacity] duration-150 ease-out origin-bottom z-30">
               <div className="bg-slate-900 text-white text-[11px] font-bold font-mono px-3 py-1.5 rounded-lg shadow-xl whitespace-nowrap flex items-center gap-1 border border-slate-700">
                 <span>{tech.name}</span>
               </div>

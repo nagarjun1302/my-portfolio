@@ -7,43 +7,52 @@ import MorphParticles from './components/MorphParticles';
 
 export default function App() {
   const [activeSection, setActiveSection] = useState('home');
-  const [copiedField, setCopiedField] = useState(null);
+  const [toast, setToast] = useState({ field: null, exiting: false });
   const [projectCategory, setProjectCategory] = useState('all');
   const [scrolled, setScrolled] = useState(false);
 
-  // Monitor scroll to update header appearance and active tab
+  // Monitor scroll to update header appearance and active tab (throttled with RAF)
   useEffect(() => {
+    let rafId = null;
     const handleScroll = () => {
-      if (window.scrollY > 80) {
-        setScrolled(true);
-      } else {
-        setScrolled(false);
-      }
+      if (rafId) return;
+      rafId = requestAnimationFrame(() => {
+        setScrolled(window.scrollY > 80);
 
-      const sections = ['home', 'experience', 'projects', 'skills', 'certificates', 'education', 'contact'];
-      const scrollPosition = window.scrollY + 200;
+        const sections = ['home', 'experience', 'projects', 'skills', 'certificates', 'education', 'contact'];
+        const scrollPosition = window.scrollY + 200;
 
-      for (const section of sections) {
-        const el = document.getElementById(section);
-        if (el) {
-          const top = el.offsetTop;
-          const height = el.offsetHeight;
-          if (scrollPosition >= top && scrollPosition < top + height) {
-            setActiveSection(section);
-            break;
+        for (const section of sections) {
+          const el = document.getElementById(section);
+          if (el) {
+            const top = el.offsetTop;
+            const height = el.offsetHeight;
+            if (scrollPosition >= top && scrollPosition < top + height) {
+              setActiveSection(section);
+              break;
+            }
           }
         }
-      }
+        rafId = null;
+      });
     };
 
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      if (rafId) cancelAnimationFrame(rafId);
+    };
   }, []);
 
   const copyToClipboard = (text, field) => {
     navigator.clipboard.writeText(text);
-    setCopiedField(field);
-    setTimeout(() => setCopiedField(null), 2500);
+    setToast({ field, exiting: false });
+    setTimeout(() => {
+      setToast(prev => ({ ...prev, exiting: true }));
+      setTimeout(() => {
+        setToast({ field: null, exiting: false });
+      }, 160);
+    }, 2200);
   };
 
   const projectsData = [
@@ -158,15 +167,15 @@ export default function App() {
   return (
     <div className="portfolio-app min-h-screen bg-[#f8fafc] text-slate-800 font-sans selection:bg-indigo-500 selection:text-white">
       
-      {/* TOAST NOTIFICATION FOR COPY */}
-      {copiedField && (
-        <div className="fixed bottom-6 right-6 z-50 bg-slate-900 text-white text-xs font-semibold px-4 py-3 rounded-xl shadow-2xl flex items-center gap-2 border border-slate-700 animate-bounce">
-          <span className="text-emerald-400 font-bold">✓</span> Copied {copiedField} to clipboard!
+      {/* TOAST NOTIFICATION FOR COPY - POLITE ENTRANCE & EXIT */}
+      {toast.field && (
+        <div className={`fixed bottom-6 right-6 z-50 bg-slate-900 text-white text-xs font-semibold px-4 py-3 rounded-xl shadow-2xl flex items-center gap-2 border border-slate-700 pointer-events-none ${toast.exiting ? 'toast-exit' : 'toast-enter'}`}>
+          <span className="text-emerald-400 font-bold">✓</span> Copied {toast.field} to clipboard!
         </div>
       )}
 
       {/* FIXED NAVBAR */}
-      <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+      <header className={`fixed top-0 left-0 right-0 z-50 transition-[background-color,border-color,box-shadow,padding] duration-200 ease-out ${
         scrolled 
           ? 'bg-white/90 backdrop-blur-md border-b border-slate-200/90 shadow-sm py-3' 
           : 'bg-transparent py-5'
@@ -189,7 +198,7 @@ export default function App() {
                 key={tab.id}
                 href={`#${tab.id}`}
                 onClick={() => setActiveSection(tab.id)}
-                className={`text-xs font-semibold px-3.5 py-1.5 rounded-full transition-all duration-200 ${
+                className={`btn-press text-xs font-semibold px-3.5 py-1.5 rounded-full transition-colors duration-150 ${
                   activeSection === tab.id
                     ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30'
                     : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
@@ -205,7 +214,7 @@ export default function App() {
             href="/nagarjun_resume_2.pdf"
             target="_blank"
             rel="noreferrer"
-            className="inline-flex items-center gap-2 text-xs font-bold px-4 py-2.5 rounded-full bg-indigo-600 hover:bg-indigo-500 text-white shadow-lg shadow-indigo-600/20 hover:shadow-indigo-600/30 transition-all transform hover:-translate-y-0.5"
+            className="btn-press inline-flex items-center gap-2 text-xs font-bold px-4 py-2.5 rounded-full bg-indigo-600 hover:bg-indigo-500 text-white shadow-lg shadow-indigo-600/20 hover:shadow-indigo-600/30 transition-[background-color,box-shadow] duration-150"
           >
             <span>Resume</span>
             <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -266,14 +275,14 @@ export default function App() {
                   href="/nagarjun_resume_2.pdf"
                   target="_blank"
                   rel="noreferrer"
-                  className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs px-6 py-3.5 rounded-xl shadow-lg shadow-indigo-600/20 hover:shadow-indigo-600/30 transition-all transform hover:-translate-y-0.5"
+                  className="btn-press inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs px-6 py-3.5 rounded-xl shadow-lg shadow-indigo-600/20 hover:shadow-indigo-600/30 transition-[background-color,box-shadow] duration-150"
                 >
                   <span>View Full Resume</span>
                 </a>
 
                 <a
                   href="#contact"
-                  className="inline-flex items-center gap-2 bg-white border border-slate-300 hover:border-indigo-500 hover:bg-slate-50 text-slate-800 font-semibold text-xs px-6 py-3.5 rounded-xl shadow-sm transition-all"
+                  className="btn-press inline-flex items-center gap-2 bg-white border border-slate-300 hover:border-indigo-500 hover:bg-slate-50 text-slate-800 font-semibold text-xs px-6 py-3.5 rounded-xl shadow-sm transition-[background-color,border-color] duration-150"
                 >
                   <span>Contact Me</span>
                 </a>
@@ -321,9 +330,9 @@ export default function App() {
               {/* Experience 1: Loyalty Automation */}
               <div className="relative group">
                 {/* Timeline node */}
-                <div className="absolute -left-[31px] md:-left-[47px] top-1.5 w-5 h-5 rounded-full bg-white border-4 border-indigo-600 shadow-md group-hover:scale-125 transition-transform" />
+                <div className="absolute -left-[31px] md:-left-[47px] top-1.5 w-5 h-5 rounded-full bg-white border-4 border-indigo-600 shadow-md group-hover:scale-110 transition-transform duration-150" />
                 
-                <div className="bg-white border border-slate-200/90 p-6 md:p-8 rounded-2xl shadow-sm hover:shadow-xl hover:border-indigo-300 transition-all duration-300 flex flex-col gap-4">
+                <div className="bg-white border border-slate-200/90 p-6 md:p-8 rounded-2xl shadow-sm hover-lift hover:border-indigo-300 flex flex-col gap-4">
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-4">
                     <div>
                       <span className="inline-block px-2.5 py-0.5 bg-indigo-50 text-indigo-700 font-mono text-[11px] font-bold rounded-md mb-1.5 border border-indigo-100">
@@ -361,9 +370,9 @@ export default function App() {
               {/* Experience 2: CADS VIT Chennai */}
               <div className="relative group">
                 {/* Timeline node */}
-                <div className="absolute -left-[31px] md:-left-[47px] top-1.5 w-5 h-5 rounded-full bg-white border-4 border-indigo-600 shadow-md group-hover:scale-125 transition-transform" />
+                <div className="absolute -left-[31px] md:-left-[47px] top-1.5 w-5 h-5 rounded-full bg-white border-4 border-indigo-600 shadow-md group-hover:scale-110 transition-transform duration-150" />
                 
-                <div className="bg-white border border-slate-200/90 p-6 md:p-8 rounded-2xl shadow-sm hover:shadow-xl hover:border-indigo-300 transition-all duration-300 flex flex-col gap-4">
+                <div className="bg-white border border-slate-200/90 p-6 md:p-8 rounded-2xl shadow-sm hover-lift hover:border-purple-300 flex flex-col gap-4">
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-4">
                     <div>
                       <span className="inline-block px-2.5 py-0.5 bg-purple-50 text-purple-700 font-mono text-[11px] font-bold rounded-md mb-1.5 border border-purple-100">
@@ -428,7 +437,7 @@ export default function App() {
                   <button
                     key={tab.id}
                     onClick={() => setProjectCategory(tab.id)}
-                    className={`text-xs font-bold px-3 py-1.5 rounded-lg transition-all ${
+                    className={`btn-press text-xs font-bold px-3 py-1.5 rounded-lg transition-colors duration-150 ${
                       projectCategory === tab.id
                         ? 'bg-indigo-600 text-white shadow-sm'
                         : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
@@ -440,11 +449,12 @@ export default function App() {
               </div>
             </div>
 
-            <div className="grid lg:grid-cols-3 gap-8">
-              {filteredProjects.map((project) => (
+            <div key={projectCategory} className="grid lg:grid-cols-3 gap-8">
+              {filteredProjects.map((project, idx) => (
                 <div
                   key={project.id}
-                  className="bg-white border border-slate-200/90 rounded-2xl p-6 md:p-7 flex flex-col justify-between shadow-sm hover:shadow-2xl hover:-translate-y-1.5 border-t-4 border-t-indigo-500 transition-all duration-300 group"
+                  style={{ animationDelay: `${idx * 40}ms` }}
+                  className="filter-item-enter bg-white border border-slate-200/90 rounded-2xl p-6 md:p-7 flex flex-col justify-between shadow-sm hover-lift border-t-4 border-t-indigo-500 group"
                 >
                   <div className="flex flex-col gap-4">
                     
@@ -495,11 +505,11 @@ export default function App() {
                         href={project.github}
                         target="_blank"
                         rel="noreferrer"
-                        className="inline-flex items-center gap-2 text-xs font-bold px-4 py-2 rounded-lg bg-indigo-50 hover:bg-indigo-600 text-indigo-700 hover:text-white border border-indigo-200 hover:border-indigo-600 transition-all font-mono shadow-sm group/btn"
+                        className="btn-press inline-flex items-center gap-2 text-xs font-bold px-4 py-2 rounded-lg bg-indigo-50 hover:bg-indigo-600 text-indigo-700 hover:text-white border border-indigo-200 hover:border-indigo-600 transition-colors duration-150 font-mono shadow-sm group/btn"
                       >
                         <SkillIcon name="GitHub" className="w-4 h-4" />
                         <span>View Source Code</span>
-                        <span className="text-xs group-hover/btn:translate-x-0.5 transition-transform">↗</span>
+                        <span className="text-xs group-hover/btn:translate-x-0.5 transition-transform duration-150">↗</span>
                       </a>
                     </div>
                   </div>
@@ -549,7 +559,7 @@ export default function App() {
               {certificatesData.map((cert) => (
                 <div
                   key={cert.id}
-                  className={`bg-white border border-slate-200/90 rounded-2xl p-6 flex flex-col justify-between shadow-sm hover:shadow-xl transition-all duration-300 group border-l-4 ${cert.badgeColor}`}
+                  className={`bg-white border border-slate-200/90 rounded-2xl p-6 flex flex-col justify-between shadow-sm hover-lift group border-l-4 ${cert.badgeColor}`}
                 >
                   <div className="flex flex-col gap-3.5">
                     <div className="flex items-center justify-between">
@@ -582,10 +592,10 @@ export default function App() {
                       href={cert.link}
                       target="_blank"
                       rel="noreferrer"
-                      className="text-xs font-bold text-indigo-600 hover:text-indigo-800 font-mono transition-colors flex items-center gap-1"
+                      className="btn-press text-xs font-bold text-indigo-600 hover:text-indigo-800 font-mono transition-colors flex items-center gap-1 group/vlink"
                     >
                       <span>Verify</span>
-                      <span>↗</span>
+                      <span className="group-hover/vlink:translate-x-0.5 group-hover/vlink:-translate-y-0.5 transition-transform duration-150">↗</span>
                     </a>
                   </div>
                 </div>
@@ -612,7 +622,7 @@ export default function App() {
             <div className="grid md:grid-cols-3 gap-6">
               
               {/* VIT Chennai */}
-              <div className="bg-white border border-slate-200 p-6 md:p-7 rounded-2xl shadow-sm hover:shadow-lg transition-all flex flex-col justify-between border-t-4 border-t-indigo-600">
+              <div className="bg-white border border-slate-200 p-6 md:p-7 rounded-2xl shadow-sm hover-lift flex flex-col justify-between border-t-4 border-t-indigo-600">
                 <div className="flex flex-col gap-3">
                   <span className="text-xs font-mono font-bold text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-md max-w-max">
                     2023 – 2027
@@ -634,7 +644,7 @@ export default function App() {
               </div>
 
               {/* Sri Chaitanya - Class 12 */}
-              <div className="bg-white border border-slate-200 p-6 md:p-7 rounded-2xl shadow-sm hover:shadow-lg transition-all flex flex-col justify-between border-t-4 border-t-purple-600">
+              <div className="bg-white border border-slate-200 p-6 md:p-7 rounded-2xl shadow-sm hover-lift flex flex-col justify-between border-t-4 border-t-purple-600">
                 <div className="flex flex-col gap-3">
                   <span className="text-xs font-mono font-bold text-purple-600 bg-purple-50 px-2.5 py-1 rounded-md max-w-max">
                     2022 – 2023
@@ -656,7 +666,7 @@ export default function App() {
               </div>
 
               {/* Sri Chaitanya - Class 10 */}
-              <div className="bg-white border border-slate-200 p-6 md:p-7 rounded-2xl shadow-sm hover:shadow-lg transition-all flex flex-col justify-between border-t-4 border-t-sky-600">
+              <div className="bg-white border border-slate-200 p-6 md:p-7 rounded-2xl shadow-sm hover-lift flex flex-col justify-between border-t-4 border-t-sky-600">
                 <div className="flex flex-col gap-3">
                   <span className="text-xs font-mono font-bold text-sky-600 bg-sky-50 px-2.5 py-1 rounded-md max-w-max">
                     2020 – 2021
@@ -701,9 +711,9 @@ export default function App() {
               {/* Email */}
               <button
                 onClick={() => copyToClipboard('nagarjun1302@gmail.com', 'Email')}
-                className="bg-white border border-slate-200 p-6 rounded-2xl shadow-sm hover:shadow-xl hover:border-indigo-500 transition-all text-left group flex flex-col gap-3"
+                className="btn-press bg-white border border-slate-200 p-6 rounded-2xl shadow-sm hover-lift hover:border-indigo-500 text-left group flex flex-col gap-3"
               >
-                <div className="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center text-indigo-600 group-hover:scale-110 transition-transform">
+                <div className="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center text-indigo-600 group-hover:scale-105 transition-transform duration-150">
                   ✉
                 </div>
                 <div>
@@ -720,9 +730,9 @@ export default function App() {
                 href="https://github.com/nagarjun1302"
                 target="_blank"
                 rel="noreferrer"
-                className="bg-white border border-slate-200 p-6 rounded-2xl shadow-sm hover:shadow-xl hover:border-indigo-500 transition-all group flex flex-col gap-3"
+                className="btn-press bg-white border border-slate-200 p-6 rounded-2xl shadow-sm hover-lift hover:border-indigo-500 group flex flex-col gap-3"
               >
-                <div className="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-900 group-hover:scale-110 transition-transform">
+                <div className="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-900 group-hover:scale-105 transition-transform duration-150">
                   <SkillIcon name="GitHub" className="w-5 h-5" />
                 </div>
                 <div>
@@ -739,9 +749,9 @@ export default function App() {
                 href="https://www.linkedin.com/in/nagarjun-p-b698852a0/"
                 target="_blank"
                 rel="noreferrer"
-                className="bg-white border border-slate-200 p-6 rounded-2xl shadow-sm hover:shadow-xl hover:border-indigo-500 transition-all group flex flex-col gap-3"
+                className="btn-press bg-white border border-slate-200 p-6 rounded-2xl shadow-sm hover-lift hover:border-indigo-500 group flex flex-col gap-3"
               >
-                <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600 group-hover:scale-110 transition-transform">
+                <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600 group-hover:scale-105 transition-transform duration-150">
                   🔗
                 </div>
                 <div>
